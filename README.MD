@@ -11,7 +11,7 @@ to a Radarr instance for download.
 - Server-side filtering by genre, release type, and region; sorting by date, rating, or title
 - Per-movie "Add to Radarr" button with folder selection modal
 - Manual refresh trigger via the "Refresh Now" nav button or `POST /admin/fetch`
-- Deployed as a systemd service inside an LXC container
+- Deployable as a systemd service (Debian/Ubuntu LXC) or OpenRC service (Alpine LXC)
 
 ## Requirements
 
@@ -72,7 +72,8 @@ app/
 │   └── radarr.py    # Async Radarr API client
 └── templates/       # Jinja2 templates (Tailwind via Play CDN)
 static/js/main.js    # Modal, folder fetch, button state
-systemd/             # Systemd service unit for LXC deployment
+systemd/             # systemd service unit (Debian/Ubuntu LXC)
+openrc/              # OpenRC init script (Alpine LXC)
 ```
 
 ## API routes
@@ -87,6 +88,8 @@ systemd/             # Systemd service unit for LXC deployment
 | `POST` | `/admin/fetch` | Trigger a manual TMDb fetch |
 
 ## Production deployment (LXC)
+
+### Debian/Ubuntu
 
 ```bash
 # 1. Create a dedicated user
@@ -109,6 +112,35 @@ systemctl enable --now movie-tracker
 
 # 5. Watch logs
 journalctl -u movie-tracker -f
+```
+
+### Alpine
+
+```bash
+# 1. Install Python
+apk add python3 py3-pip git
+
+# 2. Create a dedicated user
+adduser -S -H -s /sbin/nologin movietracker
+
+# 3. Clone and install
+git clone <repo> /opt/movie-tracker
+cd /opt/movie-tracker
+python3 -m venv venv
+venv/bin/pip install -r requirements.txt
+
+# 4. Configure
+cp .env.example .env
+vi .env
+
+# 5. Install and start the OpenRC service
+cp openrc/movie-tracker /etc/init.d/movie-tracker
+chmod +x /etc/init.d/movie-tracker
+rc-update add movie-tracker default
+rc-service movie-tracker start
+
+# 6. Watch logs
+tail -f /var/log/movie-tracker.log
 ```
 
 ## Credits
