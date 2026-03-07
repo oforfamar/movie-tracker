@@ -31,7 +31,7 @@
       <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Genre</label>
       <select
         name="genre"
-        onchange="this.form.submit()"
+        onchange="navigateWithFilter('genre', this.value)"
         class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-plex hover:border-gray-600 transition-colors min-w-[130px]"
       >
         <option value="">All Genres</option>
@@ -46,7 +46,7 @@
       <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Type</label>
       <select
         name="release_type"
-        onchange="this.form.submit()"
+        onchange="navigateWithFilter('release_type', this.value)"
         class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-plex hover:border-gray-600 transition-colors min-w-[140px]"
       >
         <option value="">All Types</option>
@@ -62,7 +62,7 @@
       <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Provider</label>
       <select
         name="provider"
-        onchange="this.form.submit()"
+        onchange="navigateWithFilter('provider', this.value)"
         class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-plex hover:border-gray-600 transition-colors min-w-[140px]"
       >
         <option value="">All Providers</option>
@@ -77,15 +77,17 @@
     <div class="flex flex-col gap-1">
       <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Region</label>
       <div class="flex rounded-lg overflow-hidden border border-gray-700">
-        <a
-          href="/movies?{% if active_genre %}genre={{ active_genre | urlencode }}&{% endif %}{% if active_release_type %}release_type={{ active_release_type | urlencode }}&{% endif %}{% if active_provider %}provider={{ active_provider | urlencode }}&{% endif %}sort={{ active_sort }}"
+        <button
+          type="button"
+          onclick="navigateWithFilter('region', '')"
           class="px-3 py-2 text-sm transition-colors {% if not active_region %}bg-plex text-black font-semibold{% else %}text-gray-400 hover:bg-gray-800{% endif %}"
-        >All</a>
+        >All</button>
         {% for r in all_regions %}
-        <a
-          href="/movies?{% if active_genre %}genre={{ active_genre | urlencode }}&{% endif %}{% if active_release_type %}release_type={{ active_release_type | urlencode }}&{% endif %}{% if active_provider %}provider={{ active_provider | urlencode }}&{% endif %}region={{ r }}&sort={{ active_sort }}"
+        <button
+          type="button"
+          onclick="navigateWithFilter('region', '{{ r }}')"
           class="px-3 py-2 text-sm border-l border-gray-700 transition-colors {% if r == active_region %}bg-plex text-black font-semibold{% else %}text-gray-400 hover:bg-gray-800{% endif %}"
-        >{{ r }}</a>
+        >{{ r }}</button>
         {% endfor %}
       </div>
     </div>
@@ -95,7 +97,7 @@
       <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Sort</label>
       <select
         name="sort"
-        onchange="this.form.submit()"
+        onchange="navigateWithFilter('sort', this.value)"
         class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-plex hover:border-gray-600 transition-colors"
       >
         <option value="release_date"  {% if active_sort == "release_date"  %}selected{% endif %}>Release Date</option>
@@ -103,14 +105,6 @@
         <option value="title"         {% if active_sort == "title"         %}selected{% endif %}>Title</option>
       </select>
     </div>
-
-    <!-- Hidden fields to preserve other active filters when sort/genre changes -->
-    {% if active_region %}
-    <input type="hidden" name="region" value="{{ active_region }}" />
-    {% endif %}
-    {% if active_provider %}
-    <input type="hidden" name="provider" value="{{ active_provider }}" />
-    {% endif %}
 
   </form>
 </div>
