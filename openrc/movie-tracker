@@ -5,9 +5,10 @@ description="Movie Tracker Web App"
 
 user="movietracker"
 group="movietracker"
-workdir="/opt/movie-tracker"
+directory="/opt/movie-tracker"
 pidfile="/run/${name}.pid"
-logfile="/var/log/${name}.log"
+output_log="/var/log/${name}.log"
+error_log="/var/log/${name}.log"
 
 # Port is hardcoded here — edit this file directly to change it.
 # All other config (API keys, MongoDB URI, etc.) is read from .env below.
@@ -17,7 +18,7 @@ command_user="${user}:${group}"
 command_background=true
 
 # Load secrets and config from .env
-env_file="${workdir}/.env"
+env_file="${directory}/.env"
 
 depend() {
     need net
