@@ -114,6 +114,32 @@
     </div>
     {% endif %}
 
+    <!-- Where to watch -->
+    {% if movie.watch_providers %}
+    <div class="mb-6">
+      <h2 class="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-3">Where to Watch</h2>
+      <div class="flex flex-wrap gap-3">
+        {% for provider in movie.watch_providers %}
+        <a
+          href="/movies?provider={{ provider.provider_name | urlencode }}"
+          title="{{ provider.provider_name }}"
+          class="flex flex-col items-center gap-1.5 group"
+        >
+          <img
+            src="https://image.tmdb.org/t/p/w92{{ provider.logo_path }}"
+            alt="{{ provider.provider_name }}"
+            loading="lazy"
+            class="w-12 h-12 rounded-lg object-cover ring-1 ring-gray-700 group-hover:ring-plex transition-all"
+          />
+          <span class="text-[10px] text-gray-500 group-hover:text-plex transition-colors text-center max-w-[56px] leading-tight">
+            {{ provider.provider_name }}
+          </span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
     <!-- Trailer -->
     {% if movie.trailer_url %}
     <div>

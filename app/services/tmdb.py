@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Tuple
 import httpx
 
 from app.config import settings
-from app.models.movie import CastMember, Movie
+from app.models.movie import CastMember, Movie, WatchProvider
 
 TMDB_BASE = "https://api.themoviedb.org/3"
 MAX_PAGES = 5
@@ -69,7 +69,7 @@ async def _fetch_movie_details(
         f"{TMDB_BASE}/movie/{movie_id}",
         params={
             "api_key": settings.tmdb_api_key,
-            "append_to_response": "credits,videos,release_dates",
+            "append_to_response": "credits,videos,release_dates,watch/providers",
         },
     )
     response.raise_for_status()
@@ -103,6 +103,51 @@ def _extract_release_type(details: Dict, region: str) -> str:
             if dates:
                 return RELEASE_TYPE_MAP.get(dates[0]["type"], "Unknown")
     return "Unknown"
+
+
+def _extract_watch_providers(
+    details: Dict, regions: List[str]
+) -> List[WatchProvider]:
+    """
+    Extract streaming/rental/purchase providers from the watch/providers
+    sub-response for the configured regions.
+
+    Preference order per region: flatrate → rent → buy.
+    Deduplicates across regions by provider_id.
+    """
+    providers_by_region = (
+        details.get("watch/providers", {}).get("results", {})
+    )
+    seen_ids: set = set()
+    providers: List[WatchProvider] = []
+
+    for region in regions:
+        region_data = providers_by_region.get(region, {})
+        # Prefer flatrate (subscription), fall back to rent then buy
+        entries = (
+            region_data.get("flatrate")
+            or region_data.get("rent")
+            or region_data.get("buy")
+            or []
+        )
+        for entry in entries:
+            pid = entry.get("provider_id")
+            if pid is None or pid in seen_ids:
+                continue
+            logo = entry.get("logo_path", "")
+            name = entry.get("provider_name", "")
+            if not logo or not name:
+                continue
+            seen_ids.add(pid)
+            providers.append(
+                WatchProvider(
+                    provider_id=pid,
+                    provider_name=name,
+                    logo_path=logo,
+                )
+            )
+
+    return providers
 
 
 def _month_date_range(year: int, month: int) -> Tuple[str, str]:
@@ -164,6 +209,9 @@ async def fetch_and_upsert(region: str, year: int, month: int) -> int:
                     "cast": _extract_cast(details),
                     "trailer_url": _extract_trailer_url(details),
                     "release_type": _extract_release_type(details, region),
+                    "watch_providers": _extract_watch_providers(
+                        details, settings.tmdb_regions
+                    ),
                     "tmdb_url": f"https://www.themoviedb.org/movie/{stub['id']}",
                     "fetched_at": datetime.now(timezone.utc),
                 }

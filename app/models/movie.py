@@ -19,6 +19,14 @@ class CastMember(BaseModel):
     character: str
 
 
+class WatchProvider(BaseModel):
+    """Embedded model — a single streaming / rental / purchase provider."""
+
+    provider_id: int
+    provider_name: str
+    logo_path: str
+
+
 class Movie(Document):
     """
     Canonical movie record.  Upserted by tmdb_id on every fetch run.
@@ -40,6 +48,7 @@ class Movie(Document):
     release_type: str = "Unknown"        # "Theatrical", "Digital", etc.
     tmdb_url: str = ""
     regions: List[str] = Field(default_factory=list)             # ["US", "GB"] — merged across fetches
+    watch_providers: List[WatchProvider] = Field(default_factory=list)  # streaming / rental providers
     fetched_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:
@@ -51,4 +60,5 @@ class Movie(Document):
             IndexModel([("release_type", ASCENDING)]),
             IndexModel([("vote_average", DESCENDING)]),
             IndexModel([("regions", ASCENDING)]),
+            IndexModel([("watch_providers.provider_name", ASCENDING)]),
         ]

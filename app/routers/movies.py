@@ -36,6 +36,7 @@ async def movies_index(
     genre: Optional[str] = Query(default=None),
     release_type: Optional[str] = Query(default=None),
     region: Optional[str] = Query(default=None),
+    provider: Optional[str] = Query(default=None),
     sort: str = Query(default="release_date"),
 ) -> HTMLResponse:
     """
@@ -44,6 +45,7 @@ async def movies_index(
         genre        — filter by genre name (exact match)
         release_type — filter by release type string
         region       — filter by region code, e.g. "US" or "GB"
+        provider     — filter by watch provider name, e.g. "Netflix"
         sort         — one of: release_date, vote_average, title
     """
     query = Movie.find()
@@ -54,6 +56,8 @@ async def movies_index(
         query = query.find(Movie.release_type == release_type)
     if region:
         query = query.find(In(Movie.regions, [region]))
+    if provider:
+        query = query.find({"watch_providers.provider_name": provider})
 
     sort_field = {
         "release_date": "+release_date",
@@ -68,6 +72,9 @@ async def movies_index(
     all_genres: List[str] = [g for g in await Movie.distinct("genres") if g is not None]
     all_release_types: List[str] = [r for r in await Movie.distinct("release_type") if r is not None]
     all_regions: List[str] = [r for r in await Movie.distinct("regions") if r is not None]
+    all_providers: List[str] = sorted([
+        p for p in await Movie.distinct("watch_providers.provider_name") if p is not None
+    ])
 
     # Last fetched timestamp — most recently upserted document
     last_fetched = await _last_fetched_str()
@@ -80,9 +87,11 @@ async def movies_index(
             "all_genres": sorted(all_genres),
             "all_release_types": sorted(all_release_types),
             "all_regions": sorted(all_regions),
+            "all_providers": all_providers,
             "active_genre": genre,
             "active_release_type": release_type,
             "active_region": region,
+            "active_provider": provider,
             "active_sort": sort,
             "last_fetched": last_fetched,
         },

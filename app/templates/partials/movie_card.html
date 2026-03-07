@@ -88,6 +88,29 @@
     </div>
     {% endif %}
 
+    <!-- Watch providers -->
+    {% if movie.watch_providers %}
+    <div class="flex flex-wrap gap-1.5 items-center">
+      {% for provider in movie.watch_providers[:4] %}
+      <a
+        href="/movies?provider={{ provider.provider_name | urlencode }}"
+        title="{{ provider.provider_name }}"
+        class="block rounded overflow-hidden ring-1 ring-gray-700 hover:ring-plex transition-all"
+      >
+        <img
+          src="https://image.tmdb.org/t/p/w45{{ provider.logo_path }}"
+          alt="{{ provider.provider_name }}"
+          loading="lazy"
+          class="w-6 h-6 object-cover"
+        />
+      </a>
+      {% endfor %}
+      {% if movie.watch_providers | length > 4 %}
+      <span class="text-[10px] text-gray-600">+{{ movie.watch_providers | length - 4 }}</span>
+      {% endif %}
+    </div>
+    {% endif %}
+
     <!-- Spacer -->
     <div class="flex-1"></div>
 
