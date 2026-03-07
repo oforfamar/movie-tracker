@@ -1,0 +1,10 @@
+{
+  "region": "US",
+  "include_theatrical": true,
+  "include_streaming": true,
+  "genres_to_exclude": [],
+  "min_vote_average": 0.0,
+  "languages": [
+    "en"
+  ]
+}

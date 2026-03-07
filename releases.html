@@ -1,0 +1,3110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Releases - February 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #4ecdc4;
+            transform: translateY(-2px);
+        }
+        
+        .btn.active {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+            color: #1a1a2e;
+        }
+        
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: #b0b0b0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+        }
+        
+        .filter-btn.active {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+            color: white;
+        }
+        
+        .stats {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            color: #4ecdc4;
+        }
+        
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .movie-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-8px);
+            border-color: #4ecdc4;
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
+        }
+        
+        .poster-container {
+            position: relative;
+            width: 100%;
+            padding-top: 150%;
+            background: #2a2a3e;
+            overflow: hidden;
+        }
+        
+        .poster-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .no-poster {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            opacity: 0.3;
+        }
+        
+        .release-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 107, 107, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .movie-info {
+            padding: 20px;
+        }
+        
+        .movie-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+        
+        .movie-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #b0b0b0;
+        }
+        
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #ffd700;
+        }
+        
+        .genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        
+        .genre-tag {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .overview {
+            color: #b0b0b0;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .cast {
+            margin-bottom: 15px;
+        }
+        
+        .cast-title {
+            font-size: 0.9rem;
+            color: #4ecdc4;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        
+        .cast-list {
+            color: #b0b0b0;
+            font-size: 0.85rem;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(78, 205, 196, 0.1);
+            border: 1px solid #4ecdc4;
+            border-radius: 6px;
+            color: #4ecdc4;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: #4ecdc4;
+            color: #1a1a2e;
+        }
+        
+        /* List view specific styles */
+        .list-view .movie-card {
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .list-view .poster-container {
+            width: 200px;
+            padding-top: 0;
+            min-height: 300px;
+            flex-shrink: 0;
+        }
+        
+        .list-view .movie-info {
+            flex: 1;
+        }
+        
+        .list-view .overview {
+            -webkit-line-clamp: 5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        @media (max-width: 768px) {
+            .list-view .movie-card {
+                flex-direction: column;
+            }
+            
+            .list-view .poster-container {
+                width: 100%;
+                padding-top: 150%;
+                min-height: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 Movie Releases</h1>
+            <p class="subtitle">February 2026</p>
+        </header>
+        
+        <div class="controls">
+            <button class="btn active" data-view="grid" onclick="toggleView('grid')">Grid View</button>
+            <button class="btn" data-view="list" onclick="toggleView('list')">List View</button>
+        </div>
+        
+        <div class="filter-section">
+            <button class="filter-btn active" data-filter="all" onclick="filterByType('all')">All (100)</button>
+            <button class="filter-btn" data-filter="Digital" onclick="filterByType('Digital')">Digital (58)</button>
+            <button class="filter-btn" data-filter="Premiere" onclick="filterByType('Premiere')">Premiere (18)</button>
+            <button class="filter-btn" data-filter="TV/Streaming" onclick="filterByType('TV/Streaming')">TV/Streaming (4)</button>
+            <button class="filter-btn" data-filter="Theatrical" onclick="filterByType('Theatrical')">Theatrical (15)</button>
+            <button class="filter-btn" data-filter="Theatrical (Limited)" onclick="filterByType('Theatrical (Limited)')">Theatrical (Limited) (5)</button>
+        </div>
+        
+        <div class="stats">
+            <span id="movie-count"></span>
+        </div>
+        
+        <div id="movie-container" class="grid-view">
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/3Ivc4Zs38qUOcL92vMJMpNLshe2.jpg' alt='Persephone' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Persephone</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 6 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Romance</span>
+                    </div>
+                    <p class="overview">A Super 8 film based on a repetitive dream reflecting on life and death, mortality and decay, spring and winter.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Guadalupe Arellanes, Guadalupe Arellanes</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1634453" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Bougainvillea</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 4 min</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">Sangtarash’s superb hand-drawn animation erupts like lava in a merrily queasy metamorphic flow, made lightly boxy by compression. Bougainvillea captures the logic of dreams and of children’s logic – for what does an adult mean when she asks a quiet child: ‘Did a mouse eat your tongue?’</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1633469" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Snow</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 2 min</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">Snow in Dallas! A creak of snow underfoot; a catch of breath in the sudden cold – and I can’t quite see, for the crystals caught in my eyelashes. Pixel blocks gather around the Shafek’s body like a soft pastel blanket, as the artist takes advantage of compression aesthetics to protect her image.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1633468" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/n4OMe6sYLdhq1DgFovhpKivHptD.jpg' alt='Ice Beast' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Ice Beast</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 2.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 50 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Action</span>
+                    </div>
+                    <p class="overview">When a young girl goes out to search for her missing grandfather, the cold is not the only thing she has to survive. As night falls and the snow closes in, she begins to realize she is not alone and whatever is out there has been waiting.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Ashley Hays Wright, David Owen Wright, Jaina Wright</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1631292" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/uOrgMFTQOCBmvqC9wT5CrLuLULM.jpg' alt='The Artist Body' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Artist Body</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 50 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span><span class="genre-tag">Adventure</span><span class="genre-tag">Music</span>
+                    </div>
+                    <p class="overview">A Singer, Musician & Filmmaker embark on a Cross Country Journey to explore what it takes to Find your Creative Voice. Through conversations, theory & musical moments, they uncover the steps & struggles every artist faces. This isn’t just a film—it’s a blueprint to find your voice.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">MaryLiz, Tony Gentry, Dariel Peniazek</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1631042" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=2sPHucYC8kY' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/fbAO9z8ckSPzj8FZ4vQBdIGSsOZ.jpg' alt='Alias' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Alias</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 122 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Family</span>
+                    </div>
+                    <p class="overview">Alias, a lovable green Pure, embarks on a rescue mission to save his friends and to secure the stolen jewelry of his People.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Jay Edwards</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1630628" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/bA8TE31DEZNRMAXFTrjevBzDRI.jpg' alt='Evil Dallen The Movie' loading='lazy'>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Evil Dallen The Movie</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ N/A</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">Dallen is Evil now</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Dallen Franck</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1630344" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Mothering Mirrors</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 11 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">After accidentally ending up at a fake abortion clinic, a young girl must face a difficult and realistic decision about whether or not she is ready to become a mother.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Lauren Burton, Martin Foster</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1628718" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/3H9qeFawqKEgJ8Eb7szTwg57YdB.jpg' alt='Semester One' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Semester One</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 5 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span><span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">A collection of home videos depicting the activities of a freshman in college and his friends</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Finn Boyle, Michael Ormond, Adnan Khan</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1628196" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="TV/Streaming">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">TV/Streaming</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Fasting</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 7 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">A film about Fasting</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Mona Walker</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627697" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/4xhQr4eZXW0awyz83kVvhNPPJvW.jpg' alt='The Load Family Murders' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Load Family Murders</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 42 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span><span class="genre-tag">Crime</span><span class="genre-tag">Mystery</span>
+                    </div>
+                    <p class="overview">A documentary filmmaker begins searching for answers regarding the unsolved murder of Brad Load. When he comes too close to answers, Brad's killer returns to take him out and begins picking off the Load family one-by-one.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Trevor Williams, Cody Perrine-McGrath, Patrick Ravida</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627474" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Tangled</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 3 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Animation</span>
+                    </div>
+                    <p class="overview">A long-lost princess with magical hair enlists a charming thief to see the floating lanterns.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Tara Carpenter, Cedric Mitchell, Marie Ortega</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627433" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/10tRMvu6Ex7JTDzAxqWK1A3eJRY.jpg' alt='Gianmarco Soresi: Shelf Life Vol. 2' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Gianmarco Soresi: Shelf Life Vol. 2</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 15 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">New topical set from New York comedian, Gianmarco Soresi, with jokes that may have already expired???</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Gianmarco Soresi</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627384" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/jsQPjVCp1u7xPZdEfraXU3BNYAp.jpg' alt='The Gayma Wards' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Gayma Wards</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 91 min</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">While hosting a parody awards show, everything starts to go wrong. Presenters are sabotaging, guests aren't showing up and the host is at their wits end.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Kendorable, Eyebee, Tetriminas</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627368" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/mkg5iwaeZ91UJyPGlTbn7BBLBH1.jpg' alt='Orange Crush & JCW: Superpower Slam 2026' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Orange Crush & JCW: Superpower Slam 2026</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 324 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Action</span><span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">Orange Crush presents Superpower Slam 2026 is a professional wrestling charity show benefitting neurodivergent individuals involving JCW and GCW and pro wrestlers from ROH/AEW it took place on 2.1.26</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Paul Walter Hauser, Mad Dog Connelly, Atticus Cogar</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627214" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Cinderella</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 3 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Animation</span>
+                    </div>
+                    <p class="overview">A mistreated servant girl uses a magical night to change her destiny.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Kameron Jackson, Laura Weaving, sara weaving</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1626914" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Aladdin</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 2 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Animation</span>
+                    </div>
+                    <p class="overview">A street thief finds a magic lamp and a chance to prove his worth.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cedric Mitchell, Cajun mills, Laura Williams</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1626898" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Effect: Bad Bunny</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-01-30</span>
+                        <span>⏱️ 23 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span>
+                    </div>
+                    <p class="overview">Dive into the world of Bad Bunny, from his Puerto Rican roots and genre-defying sound to a historic homegrown residency.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Jerry Pullés, Ebro Darden, Petra Rivera-Rideau</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1626815" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=vfDCQRgIBjQ' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Crimson High 3</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 12 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Animation</span>
+                    </div>
+                    <p class="overview">As graduation looms, Sarah and Caleb's final year at Crimson High is crashed by an extraterrestrial threat that views monsters and humans alike as obsolete, forcing the ultimate alliance to save their world-and their future.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cedric Mitchell, Tara Carpenter, Alissa Carter</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1626678" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/y0RDWlKx0Bldt7puN7CMT78U6Q9.jpg' alt='Dominik Hašek: Always the Goalie' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Dominik Hašek: Always the Goalie</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 96 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span>
+                    </div>
+                    <p class="overview">Dominik Hašek, Olympic gold medalist and two-time Stanley Cup-winning goaltender, looks back on his life growing up in Pardubice, Czechoslovakia. His longest-tenured NHL team, the Buffalo Sabres, walk Hašek through his past to see how his love of hockey and the political and cultural influences of growing up in Pardubice molded him into one of the greatest goalies the sport has ever seen.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Dominik Hašek, František Musil, Otakar Janecký</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1626428" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="TV/Streaming">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/t2YZk3NRn6myKIOfnfxnEjXMTFC.jpg' alt='Our Dead Husband' loading='lazy'>
+                    <div class="release-badge">TV/Streaming</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Our Dead Husband</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 90 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Thriller</span><span class="genre-tag">Mystery</span><span class="genre-tag">TV Movie</span>
+                    </div>
+                    <p class="overview">Graphic design firm owner Kris is devastated when she discovers her husband, Ritchie, shot dead in their home. She assumes it has to do with Ritchie's work in high-level intelligence. But as Kris prepares for the funeral, she learns that Ritchie's stories about his missions were a cover for a secret family a few hours away. When police begin to suspect Kris for the murder and an attempt is made on her life, she must overcome her distrust of Ritchie's other wife to find out who killed him—and who is now trying to kill her.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Brittney Q. Hill, Deb Foster, Molly McCluskey</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1624096" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/mgmp2ZAN2sPXcF7GtNzStyW2XFW.jpg' alt='Bonehead 2' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Bonehead 2</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 7 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span><span class="genre-tag">Comedy</span><span class="genre-tag">Romance</span>
+                    </div>
+                    <p class="overview">A skeleton's prospects at connecting with others seem hopeless, until he meets a curious stranger.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Garrett Watts, Amarise Defranco, Josh Brodis</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1623951" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical (Limited)">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/2fLUCNV3UxL3qUwpsVvXjBJ2hQT.jpg' alt='Crocodile Dose' loading='lazy'>
+                    <div class="release-badge">Theatrical (Limited)</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Crocodile Dose</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 10.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 70 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">On their first summer back from college Curtis, Jimmy, and Abe set out to have a lit night at Curtis's ex girlfriend's house. Things go awry when Curtis can't handle his emotions.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Chase Mackay, Graham Cox, Jason Waters</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1623350" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/twQuGaI70BOFGxbthjrvX2ZlGj0.jpg' alt='Canticle of The Sun' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Canticle of The Sun</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 6 min</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">The quiet hum of varied streets gathers into a song of dust and light.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1622625" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/g9K9AbfdQDReBaaGywVxmHxlg3d.jpg' alt='NJPW Road to The New Beginning 2026 - Day 5' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">NJPW Road to The New Beginning 2026 - Day 5</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 154 min</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">The fifth night of Road to The New Beginning 2026 was a professional wrestling event promoted by New Japan Pro-Wrestling (NJPW) that took place on February 1, 2026, at Korakuen Hall in Tokyo, Japan.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Francesco Akira Begnini, Lee Jae-kyung, Taiji Ishimori</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1613540" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/oIwujxbQkd0AW7NIG6BtVjdJB9h.jpg' alt='Misery Signals: The Final Performance' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Misery Signals: The Final Performance</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 91 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Music</span>
+                    </div>
+                    <p class="overview">The Final Live performance from Misery Signals, recorded at Union Hall, Edmonton 10.19.24</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Branden Morgan, Ryan Morgan, Jesse Zaraska</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1608195" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/8s68gK7EhHKmIA51t6zDb1Q214n.jpg' alt='Say Cheese' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Say Cheese</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 70 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span><span class="genre-tag">Thriller</span>
+                    </div>
+                    <p class="overview">Every snapshot unveils the essence of life's fleeting moments, a time capsule woven with laughter and love but this camera will be your last shared memory before death.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Frank Palangi, Erica James, Jake Navatka</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1606791" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/g8RMVw8cW05a89fP4Y9Podxuw1K.jpg' alt='Order for Mike Snow' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Order for Mike Snow</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 4 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">A caterer running late for a funeral causes a scene in a deli.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Kyle Gustafson, Jamil Denard, Jack Korothy</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1606286" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical (Limited)">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/1jqf3uuEJKj2bAJYr2d38b74COW.jpg' alt='Now Then Forward' loading='lazy'>
+                    <div class="release-badge">Theatrical (Limited)</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Now Then Forward</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 15 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">After the loss of matriarch Rhea, George Bellamy Jr and his ailing veteran father, George Sr, are forced to wrestle with years of hurt and expectations that have taken root in their relationship, at the cost of a new level of transparency neither is prepared for.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Luke Barnett, James Donadio, William Gene Price III</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1600109" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/cMGiATjmd53WnUmU02W3jHoYvw0.jpg' alt='Andre' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Andre</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 80 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span><span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">Andre inherits a small fortune, which pushes him into a series of surreal and aimless encounters with eccentric strangers.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Emmanuel Routsis, Paige Mousseau, Dylan Gillespie</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1569967" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/wOOQgNNVYbCvSPdojDxuUjsY3lv.jpg' alt='Mountain King' loading='lazy'>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Mountain King</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 3.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 94 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span><span class="genre-tag">Comedy</span><span class="genre-tag">Fantasy</span>
+                    </div>
+                    <p class="overview">When Hannah travels to Sweden to surprise her boyfriend and meet his parents, she begins to suspect that his family is hiding a monstrous secret.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Hannah Deale, Carter Sirianni, Keoki Trask</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1565990" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical (Limited)">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/kNzCM25H1XaEBZRICFuokATqpAK.jpg' alt='Fuck Instagram' loading='lazy'>
+                    <div class="release-badge">Theatrical (Limited)</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Fuck Instagram</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 13 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">Years after their falling out, two ex-best friends coincidentally get into the same Uber share.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Mehaa Mekala, Vanessa Carillo, Jeremy Tinaco</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1506498" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/g99CrmT1Sor0dPsMYomQvgmfvS.jpg' alt='First Nights' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">First Nights</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 10.0</span>
+                        <span>📅 2026-02-01</span>
+                        <span>⏱️ 15 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span><span class="genre-tag">Romance</span>
+                    </div>
+                    <p class="overview">Lily and her friends go on their yearly beach trip(s) amidst major life changes.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Rae Smith, J. Wyatt Turner, Ellie Hudspeth</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1474061" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/5AbSaeeaOJptqhuVKteua0DKsmK.jpg' alt='Ever Behind the Sunset' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Ever Behind the Sunset</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 8 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Animation</span>
+                    </div>
+                    <p class="overview">A hand-painted stop-motion elegy that traces the erasure of a family home by eminent domain, accompanied by a soundscape drawn from archival family VHS recordings.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1633588" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/6vImb4oYUcmYAJflgCM82fw3laV.jpg' alt='LONG LIVE THE ARTISTS: "Good Luck, Have Fun, Don't Die" Creator Contest' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">LONG LIVE THE ARTISTS: "Good Luck, Have Fun, Don't Die" Creator Contest</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 2 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Science Fiction</span><span class="genre-tag">Action</span><span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">In the Hype leading up to Gore Verbinski's New Film, "Good Luck, Have Fun, Don't Die", Lucy Peterson decides to make a Video about how much She Loves Gore Verbinski's Work and how Hyped She is for His New Film!! That is, until her Phone starts rattling all on its Very Own!!</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Lucy Peterson, Josie Lynn, Indy</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1633130" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=5_OnEVFdblY' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/1We7CCSf7jRz6hjvJBOl29PaPDr.jpg' alt='Buzz Me In' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Buzz Me In</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 5 min</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">Brian forgot his keys after a one-night stand and now needs someone to buzz him into his building.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Luke Ritter, Gideon Hambright, Katie Hambright</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1631392" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Purple Zombie</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 5 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span>
+                    </div>
+                    <p class="overview">A bounty hunter is tasked with retrieving a treasure in a desert.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1628360" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/7lIW886AsxZKXIUlA2amjKm838c.jpg' alt='Rule of Return' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Rule of Return</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 10.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 3 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Animation</span>
+                    </div>
+                    <p class="overview">A surrealist short film by Ellie Thatcher, following acceptance of a changing world by a high-ranking noble.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Ellie Thatcher</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1628187" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/wSIuEeSAYz9bFhFjU9i3Zki9HGP.jpg' alt='Accordions Geoffrey & Mary Melodica' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Accordions Geoffrey & Mary Melodica</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 3 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Animation</span><span class="genre-tag">Comedy</span><span class="genre-tag">Family</span><span class="genre-tag">Music</span>
+                    </div>
+                    <p class="overview">Mary Melodica is sad that the kids at the playground made fun of her melodica, but her grandpa Accordions Geoffrey has a plan to win them over...!</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627915" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/rWkI9Fh3rlxZQS4GKUesCIM85M9.jpg' alt='Resident Evil Requiem: Evil Has Always Had a Name' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Resident Evil Requiem: Evil Has Always Had a Name</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 7.6</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 4 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span>
+                    </div>
+                    <p class="overview">In the midst of the chaos ensuing in Raccoon City after a virus outbreak, a mother and daughter traverse through the infected-filled streets in pursuit of safety.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Maika Monroe, Olivia Aray</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627865" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical (Limited)">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Theatrical (Limited)</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Ping Pong Hamlet</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-01-31</span>
+                        <span>⏱️ 4 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">A short film rendition of Hamlet, through the medium of table tennis.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Quinn Sadlier, Jacob Hladyshewsky, Kevin Sullivan</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627853" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Andy Warhol Exposed: Newly Processed Films from the 1960s</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 71 min</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">In 2024 Katie Trainor, MoMA’s film collections manager, and Greg Pierce, the Andy Warhol Museum’s then-director of film and video, worked together with Colorlab to process more than eighty 100-foot rolls of unprocessed black-and-white and color film left untouched by Warhol and his associates from the early days of Andy Warhol’s Factory filmmaking. Some 60 years after the rolls were exposed to light, what they uncovered was beautifully grainy raw footage from material shot for Sleep, Kiss, Batman Dracula, and Couch, as well as five unseen Screen Test portraits featuring Factory regulars. As an added bonus, five film rolls shot by Factory cinematographer Danny Williams showcasing Gerard Malanga, Paul Morrissey, Edie Sedgwick, the Velvet Underground, and Andy Warhol will also be seen for the first time. Silent.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627192" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/pv0avK8UmaoyV81zdDo9GHleP48.jpg' alt='meppets' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">meppets</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 71 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span><span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">who will i meep next?  12 months of puppet making condensed into a single film.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Phoebe Link</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1626618" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/m5OGC1PXXXP7CXZ9YAg1FQhbivo.jpg' alt='Everyone Was There' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Everyone Was There</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 7 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">During a group therapy session, one man's withdrawn presence reveals the unseen weight of depression and how it hides in plain sight.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Noah Grant, Tracery Clark, Charnie Dondrea</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1626005" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/g9K9AbfdQDReBaaGywVxmHxlg3d.jpg' alt='NJPW Road to The New Beginning 2026 - Day 6' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">NJPW Road to The New Beginning 2026 - Day 6</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ N/A</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">The sixth night of Road to The New Beginning 2026 was a professional wrestling event promoted by New Japan Pro-Wrestling (NJPW) that took place on February 2, 2026, at Korakuen Hall in Tokyo, Japan.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Hirooki Goto, Ryohei Oiwa, Luke James Uggles Eatwell</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1613541" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/6dgeup24HvJeunwG8TrPGqj4IBt.jpg' alt='Valpurnis: Saturan' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Valpurnis: Saturan</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 69 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Music</span><span class="genre-tag">History</span>
+                    </div>
+                    <p class="overview">A Rock-Opera unlike any other film ever made, depicting the stages of Judas Iscariot's decision to sell Jesus Christ to the Romans.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Christ Opherstein, Curtis Moonflower, James Hewitt II</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1610775" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/kFiJEG6JXJhN3o2AZh001ifhrZ1.jpg' alt='New Jersey Devil' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">New Jersey Devil</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 2.0</span>
+                        <span>📅 2026-02-02</span>
+                        <span>⏱️ 132 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span><span class="genre-tag">Mystery</span>
+                    </div>
+                    <p class="overview">16-year-old Sophie is in the process of being adopted when a sinister force out of New Jersey folklore begins to torment her new family.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Olivia Mignone, Veronika Babina, Ryan Callaway</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1520453" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=EyypVcNHEf8' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/24yyckA68QnwX3zh0UF6V6LYXIz.jpg' alt='Love, Brooklyn' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Love, Brooklyn</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 10.0</span>
+                        <span>📅 2025-08-29</span>
+                        <span>⏱️ 98 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Romance</span><span class="genre-tag">Drama</span><span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">Roger, a writer, navigates complicated relationships with his ex Casey and his current lover Nicole, a newly-single mother, with the support of his best friend Alan. A modern romance set against the rapidly changing landscape of Brooklyn, New York.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">André Holland, Nicole Beharie, DeWanda Wise</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1398910" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=UDNUneVRTKw' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/1jniGHjJMAooWk8D7fFdTgJQb7o.jpg' alt='I, Scorpio' loading='lazy'>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">I, Scorpio</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 2.0</span>
+                        <span>📅 2014-07-11</span>
+                        <span>⏱️ 74 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Romance</span><span class="genre-tag">Mystery</span><span class="genre-tag">Adventure</span>
+                    </div>
+                    <p class="overview">An experimental narrative exploring the relationship that develops between a Mexican hitchhiker and a drug dealer that he meets on a desert road in 1974.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Coleman Kent, Christian Isaac Cruz</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/981271" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/evwqe4p2LC4RUqltWltdiTP2Lwf.jpg' alt='My Mystery Romance' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">My Mystery Romance</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 86 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Romance</span>
+                    </div>
+                    <p class="overview">Cora's make-or-break mystery dinner erupts into a real-life whodunnit when a guest is found dead. With her career and freedom on the line, Cora must unmask the killer before the final course is served.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1635337" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/pJ5XDwWXsrIMYqu6BqOrDr3l3kn.jpg' alt='Kristin Key: Lesbian Army' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Kristin Key: Lesbian Army</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 60 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">With a guitar, quick wit, and wildly original sense of humor, comedian Kristin Key takes the stage in her debut comedy special. A fearless, funny, and deeply personal celebration of identity, love, and the beautiful mess of being human.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Kristin Key</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1630265" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/c9Nu6WzYALFb3yQeMVovIkOwIa.jpg' alt='my plastic lung' loading='lazy'>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">my plastic lung</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 10 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span><span class="genre-tag">Family</span>
+                    </div>
+                    <p class="overview">A disabled teenager with fake, plastic lungs that need to be operated by another person,  begins to lash out against his family.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Jack Cregg, Lauren Aponte, Michael Mazzone</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1629057" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/zPsvobJb1x4eMRcieMcBnwSD9QN.jpg' alt='Unintended Consequences' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Unintended Consequences</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 96 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">A self-absorbed and ill-equipped father struggles to reconnect with his estranged and embittered son following his discovery of his affair with another woman. Wanting to defend his mother's honor, his son decides to seek revenge on the mistress.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">DeWayne Owens, Atalie Hass, Hope Knight</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1628468" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=ML-ZktxSHuQ' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/g9K9AbfdQDReBaaGywVxmHxlg3d.jpg' alt='NJPW Road to The New Beginning 2026 - Day 7' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">NJPW Road to The New Beginning 2026 - Day 7</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ N/A</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">The seventh night of Road to The New Beginning 2026 was a professional wrestling event promoted by New Japan Pro-Wrestling (NJPW) that took place on February 3, 2026, at Iwaki City Gymnasium in Iwaki, Fukushima, Japan.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Yota Tsuji, Daniel Moloney, Daiki Nagai</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627808" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="TV/Streaming">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">TV/Streaming</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Contaminated: The Carpet Industry's Toxic Legacy</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 54 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span>
+                    </div>
+                    <p class="overview">How did PFAS chemicals once used in popular stain-resistant carpets end up in the water and environment in parts of Georgia, Alabama and South Carolina? FRONTLINE, The Associated Press, The Atlanta Journal-Constitution, The Post and Courier and AL.com investigate what happened with these forever chemicals and the ongoing health impacts. The joint investigation draws on thousands of pages of documents and court depositions and interviews with former regulators and industry insiders, as well as doctors, scientists and people who have the kinds of illnesses that researchers have linked to PFAS contamination.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Will Lyman</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1627046" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/sszLm86S4eGZcQfgZgmDszTr9Ie.jpg' alt='Last Tour Home' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Last Tour Home</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 100 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Western</span><span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">When war veteran Tyler takes a ranch job to escape his past, he finds uneasy peace in the company of an older vet and his granddaughter. But when a grieving neighbor begins to suspect Tyler knows something about his sister’s unsolved death, tensions rise and secrets threaten to surface. Last Tour Home is a gripping modern Western about the cost of loyalty, the weight of memory, and the danger of long-buried truths.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Matthew Blade, Cherish Rodriguez, Michael Bricker</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1623244" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=jkc97MHvSbM' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/4Q1E0rQlYfxiWByxvespMMk8TJc.jpg' alt='Mo Gilligan: In the Moment' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Mo Gilligan: In the Moment</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 7.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 62 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">Mo Gilligan takes on Hollywood — and lives to tell the tale. In this lively special, the Londoner dishes on fame, family and being British in America.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Mo Gilligan</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1616700" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/rMhOS5Ee6hFmm9PDC24JERtb1Fm.jpg' alt='But Did You Notice The Gorilla?' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">But Did You Notice The Gorilla?</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 37 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span><span class="genre-tag">Adventure</span><span class="genre-tag">Action</span>
+                    </div>
+                    <p class="overview">A set of youthful characters are tormented by an enigmatic ape who seeks to drive a wedge between friends. In another part of the city, two unlikely friends embark on a misguided crusade.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Theo MacQuarrie, Oona Hanson, Michael Breitkopf</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1603942" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=LAMkTBVMGo0' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/kH65fykV9wbvqlkRPvrrZOZLX39.jpg' alt='Attack of the Kraken' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Attack of the Kraken</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 86 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Action</span><span class="genre-tag">Horror</span><span class="genre-tag">Fantasy</span>
+                    </div>
+                    <p class="overview">A whaling vessel drifts off-course as its captain hunts the mythical Kraken. Unbeknown to him, the Kraken is also on the hunt. After betrayal and destruction, the remaining crew must battle the beast in a final fight for survival.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Ross Townsend-Green, Paul Marlon, Hannah Baxter-Eve</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1602259" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/5eNN8KLDPUXDqIkTdCbmn1gx5P7.jpg' alt='Even If This Love Disappears Tonight' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Even If This Love Disappears Tonight</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 8.1</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 106 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Romance</span><span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">A high school girl wakes up each day with no memory of yesterday. When she agrees to date a shy classmate, can their love grow with every new beginning?</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Choo Young-woo, Shin Sia, Cho Yu-jung</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1466115" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=rjAs9Ks-3V0' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical (Limited)">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/7DgwYc5uX0Nvr4816dAS3qQNPLb.jpg' alt='The Prospect' loading='lazy'>
+                    <div class="release-badge">Theatrical (Limited)</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Prospect</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2025-02-01</span>
+                        <span>⏱️ 95 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">When high school senior Jerry Vanetti gets rejected from every college he applied to, he hatches a plan to pose as an elite baseball prospect in order to trick a school into giving him an athletic scholarship… despite the fact that he’s never played a sport in his life.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Rishi Mahesh, Dana Donnelly, Prance</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1443170" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=72Od0QS68kk' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/m4GZqvDWRkMjiHPtCgCTi5p12Hc.jpg' alt='Abel Ernest Tembo's Suspect' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Abel Ernest Tembo's Suspect</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ 92 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Action</span><span class="genre-tag">Crime</span><span class="genre-tag">Thriller</span>
+                    </div>
+                    <p class="overview">Inspector Joseph Kimball Kobé and his team investigate a mysterious cult of serial killers calling themselves "the lost souls." They are determined to save the world from this threat.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Dave Dimak, Sabrina Capaldi, Moïse N'Tumba</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1409643" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=0Zi0pAaedlw' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/hZvynxDdzXUnUf6b76xp5fmZ9d2.jpg' alt='Deeper' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Deeper</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2025-09-01</span>
+                        <span>⏱️ 14 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">Dealing with anxiety and phobias, Dafni struggles to finish a drawing. As she navigates her relationship with her mother, friends, as well as a dog that she’s been asked to pet sit, her old best friend suddenly reappears after many years and wants to meet up.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Irene Heretaki, Maria Vourtsi, Eirini Labrou</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1402847" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=BHqFpMf9P_4' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/mJGFduBPAzTKzOeCeTjBBOxnalB.jpg' alt='The Housemaid' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Housemaid</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 7.2</span>
+                        <span>📅 2025-12-19</span>
+                        <span>⏱️ 131 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Mystery</span><span class="genre-tag">Thriller</span>
+                    </div>
+                    <p class="overview">Trying to escape her past, Millie Calloway accepts a job as a live-in housemaid for the wealthy Nina and Andrew Winchester. But what begins as a dream job quickly unravels into something far more dangerous—a sexy, seductive game of secrets, scandal, and power.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Sydney Sweeney, Amanda Seyfried, Brandon Sklenar</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1368166" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=BqWH0KDqm3U' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/dQ8lpRqWFxgR3dfm64MAr2L2VDN.jpg' alt='Fear of Flying' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Fear of Flying</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-03</span>
+                        <span>⏱️ N/A</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">Mark is a mess. He’s afraid of everything, especially flying. When he meets the possible love of his life, he must try to navigate work, love and life while confronting his worry, anxiety and depression.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Mike Mitchell, Charlene Amoia, Gena Shaw</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1274914" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/iLE2YOmeboeTDC7GlOp1dzh1VFo.jpg' alt='The Secret Agent' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Secret Agent</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 7.5</span>
+                        <span>📅 2025-11-26</span>
+                        <span>⏱️ 161 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Crime</span><span class="genre-tag">Drama</span><span class="genre-tag">Thriller</span>
+                    </div>
+                    <p class="overview">Brazil, 1977. Marcelo, a technology expert in his early 40s, is on the run. Hoping to reunite with his son, he travels to Recife during Carnival but soon realizes that the city is not the safe haven he was expecting.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Wagner Moura, Carlos Francisco, Tânia Maria</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1220564" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=9UfrzDKrhEc' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/xZqo0yPARmyF8TACVNyaOACkYWG.jpg' alt='We Bury the Dead' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">We Bury the Dead</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 6.2</span>
+                        <span>📅 2026-01-02</span>
+                        <span>⏱️ 95 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span><span class="genre-tag">Thriller</span>
+                    </div>
+                    <p class="overview">After a catastrophic military disaster, the dead don't just rise—they hunt. The military insists they are harmless and slow-moving, offering hope to grieving families. But when Ava enters a quarantine zone searching for her missing husband, she uncovers the horrifying truth: the undead are growing more violent, more relentless, and more dangerous with every passing hour.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Daisy Ridley, Brenton Thwaites, Mark Coles Smith</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1198984" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=YmPyNvrzF0A' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/vbeyOZm2bvBXcbgPD3v6o94epPX.jpg' alt='Hamnet' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Hamnet</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 7.8</span>
+                        <span>📅 2025-11-26</span>
+                        <span>⏱️ 126 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span><span class="genre-tag">Romance</span><span class="genre-tag">History</span>
+                    </div>
+                    <p class="overview">The powerful story of love and loss that inspired the creation of Shakespeare's timeless masterpiece, Hamlet.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Jessie Buckley, Paul Mescal, Emily Watson</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/858024" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=xYcgQMxQwmk' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/7R4YCoc5rd4X2gCqXtCvMJZ7WmG.jpg' alt='The Mandalorian: Knot That One' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Mandalorian: Knot That One</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 2 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Animation</span><span class="genre-tag">Science Fiction</span><span class="genre-tag">Fantasy</span><span class="genre-tag">Family</span>
+                    </div>
+                    <p class="overview">The Mandalorian recruits a small electrician to help repair the Razor Crest.  Watch this stylized celebration of the original stories.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1633676" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/dmBBJvbaslH9eZ348dpk3O7BMH8.jpg' alt='CONSCIENCE' loading='lazy'>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">CONSCIENCE</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 9 min</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">A dream of an old film.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1630665" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/g3ZonXyokyiPXgaH0exkKLLOsv7.jpg' alt='Overwatch Animated Short “Reign of Talon”' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Overwatch Animated Short “Reign of Talon”</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 7 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Animation</span><span class="genre-tag">Science Fiction</span><span class="genre-tag">Action</span>
+                    </div>
+                    <p class="overview">It’s Vendetta vs. Doomfist in the fight for control of Talon.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Chiara Lucia Preziosi, Sahr Ngaujah, Keith Ferguson</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1629596" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/u4BFjRaz6R8QXS9k4gl8MhYnSAd.jpg' alt='Empty Archetypes' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Empty Archetypes</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 8 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span><span class="genre-tag">Science Fiction</span>
+                    </div>
+                    <p class="overview">Three figures, supposedly representing human forms seen through light levels far below the visible light spectrum, have a series of conversations in a waiting room.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Null Query</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1629275" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/bWYjKmSbq35oNlNxT2NiFnTdSzq.jpg' alt='Social Chameleon' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Social Chameleon</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 6 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">A teenager struggles with fitting in social groups.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Lily Porter, Scarlett Morgan, Gavin Thomassen</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1628643" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Jackie Fabulous: You Can Leave</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 60 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">Jackie Fabulous brings big, unapologetic energy-spilling hilarious truths about ex-husbands, diet pills, menopause, and what people do that drive you nuts. Charisma, killer timing, and heart make this hour bold, joyous, and very, very fabulous.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1623569" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/y9JOnlKrjYhWLsHdKfqe7kCiQqF.jpg' alt='Chris Spencer: GOAT Adjacent' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Chris Spencer: GOAT Adjacent</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 50 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">Chris Spencer breaks down marriage, family, aging, race, and his Jamaican roots with fearless honesty, precision, and the kind of experience you get from working alongside comedy’s all-time greats.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Chris Spencer</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1623564" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/qhNThwc72GqihJhXaP29Af5hJ2A.jpg' alt='The Investigation of Lucy Letby' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Investigation of Lucy Letby</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 6.5</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 95 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span><span class="genre-tag">Crime</span>
+                    </div>
+                    <p class="overview">An engaging and thought-provoking look at Lucy Letby, the former nurse serving life in prison after being convicted of the murders of seven infants and the attempted murders of seven others.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Lucy Letby</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1620991" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=x93eZD1F4vs' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/g9K9AbfdQDReBaaGywVxmHxlg3d.jpg' alt='NJPW Road to The New Beginning 2026 - Day 8' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">NJPW Road to The New Beginning 2026 - Day 8</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ N/A</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">The eighth night of Road to The New Beginning 2026 was a professional wrestling event promoted by New Japan Pro-Wrestling (NJPW) that took place on February 4, 2026, at Toyota Crown Arena in Fukushima, Japan.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Francesco Akira Begnini, Lee Jae-kyung, Zane Jay</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1613543" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/p0FvNm1dZnGTnUiYOGMTLl3eD9N.jpg' alt='Is It Cake? Valentines' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Is It Cake? Valentines</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 44 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">Cupid's arrow has struck the Is It Cake kitchen for the first-ever Valentines special! Three baking couples of master cake artists compete. Together, they tackle ALL NEW games, craft swoonworthy cakes, and attempt to fool the judges and each other! AND for the first time in Is It Cake history, there are games just for the viewer! With hearts pounding and money on the line, these couples are in for the sweetest date night of their lives!</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Mikey Day, Ashlee Simpson, Evan Ross</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1610866" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=0WEEyLgQ1i0' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Way Of The Heavier Warrior</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 20 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span><span class="genre-tag">Action</span>
+                    </div>
+                    <p class="overview">After being heartbroken when his wife Karen leaves him for being overweight and inactive, Niko searches for a way to win back her love. He discovers an ad for a Tai Chi program in China and travels to their dojo, where Master Chi teaches him the discipline and ways of the warrior. Early challenges, including a humiliating tournament loss, test Niko’s determination, but with guidance and self-reflection, he trains harder and masters the art of Tai Chi and other martial skills. Returning to compete, he triumphs in a dramatic tournament victory, proving his dedication and transformation. The film concludes with Niko receiving medals and recognition for his hard work.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Dalton Erb, Ashlyn Erb, Austin Erb</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1610022" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/tcwar1rL0neoLvnklL7DzYw7sN8.jpg' alt='The Muppet Show' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">The Muppet Show</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 7.1</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 32 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span><span class="genre-tag">Family</span><span class="genre-tag">Music</span><span class="genre-tag">TV Movie</span>
+                    </div>
+                    <p class="overview">Music, comedy, and a whole lot of chaos is bound to ensue when The Muppets once again take the stage of the original Muppet Theatre with their very special guest, Sabrina Carpenter!</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Bill Barretta, Dave Goelz, Eric Jacobson</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1548113" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=hSLE5Psfs6U' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/bWeQeTVv9Wi3v5iosuF5WUvuU59.jpg' alt='Dead Serious' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Dead Serious</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 13 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">A mother surprises her kids with a trip to the place she wants to be buried. When they get there, the kids disagree with her decision.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Jessica Hecht, Zane Pais, Elise Kibler</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1484762" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/o7dVxvZIKnAB7k1eeeWp2k14Es7.jpg' alt='Relationship Goals' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Relationship Goals</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 5.5</span>
+                        <span>📅 2026-02-04</span>
+                        <span>⏱️ 96 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Romance</span><span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">When TV producer Leah Caldwell aims to become the first woman running New York's top morning show, her ex competes for the same role. Leah stays focused on her career, until chemistry with her ex challenges her priorities.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Kelly Rowland, Method Man, Robin Thede</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1433842" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=MeCJampyYW0' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/vl8oadLGClREo2sBqZkRYB1NjUg.jpg' alt='Guts 4 U' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Guts 4 U</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 3 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Romance</span><span class="genre-tag">Horror</span>
+                    </div>
+                    <p class="overview">In this film you'll find kisses are much more than a physical display of love and devotion.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Ari Morocco, Johnny Dickie</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1634444" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/dhJsoElHzdyi23RGtKOWDEDKJF5.jpg' alt='Eugene Mirman: Here Comes The Whimsy' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Eugene Mirman: Here Comes The Whimsy</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 8.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 55 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">Eugene Mirman reveals a series of mild grievances with warmth and wonder in his new comedy special, Here Comes The Whimsy. He shares anecdotes from fatherhood, insights from travel, and tackles dress-code trauma and rental car disputes with a playful spirit that is both sharp and silly. He continues his tradition of offering untraditional ways to purchase the special, including packages that come with politically confusing magnetic bumper stickers, a small framed and autographed piece of Japanese siding from his house, a custom obituary, and a commemorative plate with a royal title. The New York Times writes, “Mirman’s stand-up is infused with a warm and cheerful sense of the ridiculous,” while Mike Birbiglia once called Eugene the “Andy Warhol of comedy.” Eugene is confident that this is the last comedy special you’ll watch (if you take poison right after).</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Eugene Mirman</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1632258" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/ivy7pUyrbCEbzmpsDmbHY3AVxXG.jpg' alt='A Waltz in C Sharp Minor' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">A Waltz in C Sharp Minor</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 2 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Music</span>
+                    </div>
+                    <p class="overview">Performers and creators Precious Renee Tucker and Eric Christison join forces to reframe Chopin's Waltz in C-sharp minor, deconstructing its formality, structure, and cultural weight between music and movement.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Precious Renee Tucker, Eric Christison</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1630019" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Othello Skit #2</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 3 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span><span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">Second skit based on the events of Shakespeare’s ‘Othello’</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Zachary Jewell, Josh Dobis, Liam Rose</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1630011" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/we0vrdRIRx5mhEAvanOXnAr2Nsh.jpg' alt='HELP' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">HELP</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 11 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span>
+                    </div>
+                    <p class="overview">An exhausted nurse slaughters what she thinks is a horrifying bloody mangled monster to survive the night, but the truth she uncovers in the aftermath is far more horrifying than any creature.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Erin Bechler, Chris Herring, Jim Cummings</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1629959" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/dEysf5gQXszfOJWBl9K0sUD1172.jpg' alt='Born to Darkness' loading='lazy'>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Born to Darkness</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 10.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 12 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span>
+                    </div>
+                    <p class="overview">A domineering professor struggles to keep his sons in the dark.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cody zak, Allison Burnett</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1629915" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/mSyz4x3J31EAHaFrOZz5L9fOo5m.jpg' alt='Sajgonka The Pigeon' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Sajgonka The Pigeon</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 6.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 1 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Family</span><span class="genre-tag">Documentary</span>
+                    </div>
+                    <p class="overview">Tribute to Sajgonka, a pigeon that passed away in 2025.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1629852" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=mpo49VRl4Fk' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="TV/Streaming">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/aQr01btjhBv1MzMB92IEIjrXCgg.jpg' alt='A Place For All: MN Community Art Centers' loading='lazy'>
+                    <div class="release-badge">TV/Streaming</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">A Place For All: MN Community Art Centers</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 27 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span>
+                    </div>
+                    <p class="overview">Explore the boundless nature of creativity in Central Minnesota. From local galleries to hands-on workshops, see how Community Art Centers create a unique environment where everyone is invited to participate, create, and belong.  This is the first installment of Lakeland PBS's "Up North Arts"</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1629806" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/A5prWnyTUHTEymxpNS4rwAv6rn.jpg' alt='A Glance at the Moon' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">A Glance at the Moon</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 5 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Fantasy</span>
+                    </div>
+                    <p class="overview">A boy tries to go to the moon.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">André Macedo</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1629755" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">MLW Battle Riot VIII</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 103 min</span>
+                    </div>
+                    <div class="genres">
+                        
+                    </div>
+                    <p class="overview">Battle Riot VIII was a professional wrestling event produced by Major League Wrestling (MLW) that took place on January 29, 2026, at the Osceola Heritage Park Events Center in Kissimmee, Florida. As the name implies, it was the eighth event in the Battle Riot chronology. The event will air on tape delay on February 5 on BeIN Sports USA and will stream on MLW's YouTube channel.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Yujiro Kushida, Templario, Kevin Kesar</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1628277" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/yjDfgddc0ZynBt4ZKSWNEIkGjB.jpg' alt='Still Hope' loading='lazy'>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Still Hope</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 113 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span><span class="genre-tag">Thriller</span>
+                    </div>
+                    <p class="overview">Beloved by her family and raised in a quiet community, 16-year-old Hope finds herself in danger when a new friend is not who he claims to be… Ripped from all she knows and forced into sex trafficking, Hope is stripped of her identity and threatened into submission, surviving years of abuse. Hope finally finds freedom and reunites with the family that never gave up looking for her. Though now safe, she struggles adjusting to her old life as she reconciles with all she’s endured. Hope’s journey is inspired by true stories and powerfully illustrates the courage it takes to find healing after life’s darkest moments.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Luna Rivera, John D. Michaels, Alex Veadov</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1548749" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/ojWSVt7O92ZLtEUyQs8u5pRI40b.jpg' alt='A Woman Called Mother' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">A Woman Called Mother</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 7.0</span>
+                        <span>📅 2026-02-05</span>
+                        <span>⏱️ 119 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Horror</span><span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">After her father’s death, Vira’s mother has a mental breakdown. To start fresh, the family moves to a new city and opens a hair salon together. While the family attempts to adjust to their new lives, Vira’s mother, Yanti, begins exhibiting strange, violent behavior reminiscent of her mental breakdown and becomes particularly preoccupied with her son’s sex life. Vira begins to investigate the strange occurrences and discovers that a dangerous ritual and a demonic possession are just the tip of the iceberg.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Artika Sari Devi, Aurora Ribero, Ali Fikry</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1374462" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=qKt7XFeSmRs' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/oq4jhk9hC22lx1k1ZYAFZrQNsGb.jpg' alt='Late Bloom' loading='lazy'>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Late Bloom</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2025-01-01</span>
+                        <span>⏱️ 13 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">The fog rests on top of a field nestled up against a secluded road, two individuals stand side by side as they survey the land. Francis, (43, Black man) is accompanied by his partner Kiko, (40, Asian woman). Together they retrace the steps of Francis’ memory at the place where his home once stood. Francis seeks to express how the effects of childhood trauma have permeated into the present day, ultimately affecting their relationship. Through their togetherness they work to unpack these suppressed emotions in a way that’s conducive to furthering their growth.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Chiemeka J. Azubuine, Joann Wu, Anna Dennis</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1330161" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Premiere">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/iQCtK477yqp6xnHHrQG2P0lXoow.jpg' alt='Ella McCay' loading='lazy'>
+                    <div class="release-badge">Premiere</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Ella McCay</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 5.9</span>
+                        <span>📅 2025-12-12</span>
+                        <span>⏱️ 115 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Comedy</span><span class="genre-tag">Drama</span>
+                    </div>
+                    <p class="overview">An idealistic young politician juggles familial issues and a challenging work life while preparing to take over the job of her mentor, the state’s longtime incumbent governor.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Emma Mackey, Jamie Lee Curtis, Spike Fearn</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1206008" target="_blank" class="action-btn">TMDb</a>
+                        <a href='https://www.youtube.com/watch?v=vRE6Iobir8k' target='_blank' class='action-btn'>Trailer</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Theatrical">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Theatrical</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Relatively Normal</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-06</span>
+                        <span>⏱️ 95 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Drama</span><span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="overview">The film follows teenager Hannah Glass as she rides out pandemic lockdown under one roof with her family and learns that the real threat isn’t only what’s happening outside the house.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Chloe Coleman, Lilia Buckingham, Grant Culling</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1632352" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/8j1FETqKZnA9Wtc8fuYpoxcjDxg.jpg' alt='Piggy All Aces: Rogue Order' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Piggy All Aces: Rogue Order</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-06</span>
+                        <span>⏱️ 122 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Adventure</span><span class="genre-tag">Animation</span><span class="genre-tag">Thriller</span>
+                    </div>
+                    <p class="overview">Taking places after the events of the hit zombie apocalypse game Piggy, created by Minitoon and IK3AS, Willow and Tigry have split their ways over reasons unknown. After getting involved and killing a member of a large settlement, Willow is on the run and Tigry is sent on to hunt her. The two must get passed their difficulties while dealing with the rough apocalypse and the onslaught of a large war brewing in survivor districts over greed and power.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">PlushieBr0sYT, Thirteensluck, Niko</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1631635" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <div class='no-poster'>🎬</div>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Fantasy Rising</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-06</span>
+                        <span>⏱️ 125 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span>
+                    </div>
+                    <p class="overview">The definitive story of the fantasy genre's journey to the heart of popular culture.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1631302" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-type="Digital">
+                <div class="poster-container">
+                    <img src='https://image.tmdb.org/t/p/w500/zMadkKwef3DUFK6UdOGQME8NuTZ.jpg' alt='Long Shots: U.S. Biathlon’s Underdog Story' loading='lazy'>
+                    <div class="release-badge">Digital</div>
+                </div>
+                <div class="movie-info">
+                    <h2 class="movie-title">Long Shots: U.S. Biathlon’s Underdog Story</h2>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ 0.0</span>
+                        <span>📅 2026-02-06</span>
+                        <span>⏱️ 44 min</span>
+                    </div>
+                    <div class="genres">
+                        <span class="genre-tag">Documentary</span>
+                    </div>
+                    <p class="overview">Short documentary on the United States' 2026 Olympic Biatholon teams, covering their training and hopes to take home the first American medal in the sport.</p>
+                    <div class="cast">
+                        <div class="cast-title">Cast</div>
+                        <div class="cast-list">Cast information not available</div>
+                    </div>
+                    <div class="actions">
+                        <a href="https://www.themoviedb.org/movie/1630785" target="_blank" class="action-btn">TMDb</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Data from The Movie Database (TMDb)</p>
+            <p>Generated on 2026-02-15 16:53:12</p>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleView(view) {
+            const container = document.getElementById('movie-container');
+            const buttons = document.querySelectorAll('.btn[data-view]');
+            
+            buttons.forEach(btn => {
+                if (btn.dataset.view === view) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            if (view === 'grid') {
+                container.className = 'grid-view';
+            } else {
+                container.className = 'list-view';
+            }
+        }
+        
+        function filterByType(type) {
+            const cards = document.querySelectorAll('.movie-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            let visibleCount = 0;
+            
+            buttons.forEach(btn => {
+                if (btn.dataset.filter === type) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            cards.forEach(card => {
+                if (type === 'all' || card.dataset.type === type) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            
+            updateCount(visibleCount);
+        }
+        
+        function updateCount(count) {
+            const countEl = document.getElementById('movie-count');
+            countEl.textContent = `Showing ${count} movie${count !== 1 ? 's' : ''}`;
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            updateCount(document.querySelectorAll('.movie-card').length);
+        });
+    </script>
+</body>
+</html>
