@@ -28,7 +28,7 @@ function openModal(btn) {
   currentTmdbId = parseInt(article.dataset.tmdbId, 10);
   currentTitle = article.dataset.title || "";
 
-  document.getElementById("modal-movie-title").textContent = title;
+  document.getElementById("modal-movie-title").textContent = currentTitle;
   document.getElementById("radarr-modal").classList.remove("hidden");
   document.body.style.overflow = "hidden";
 
