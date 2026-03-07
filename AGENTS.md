@@ -56,7 +56,9 @@ movie-tracker/
 │   └── js/
 │       └── main.js               # Modal logic, fetch() POST, button state
 ├── systemd/
-│   └── movie-tracker.service     # Copy to /etc/systemd/system/ on LXC
+│   └── movie-tracker.service     # Copy to /etc/systemd/system/ on Debian/Ubuntu LXC
+├── openrc/
+│   └── movie-tracker             # Copy to /etc/init.d/ on Alpine LXC
 ├── .env                          # Never committed — real secrets
 ├── .env.example                  # Committed template
 ├── requirements.txt
@@ -88,10 +90,16 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 curl -X POST http://localhost:8000/admin/fetch
 ```
 
-### View logs in production (systemd)
+### View logs in production (Debian/Ubuntu — systemd)
 
 ```bash
 journalctl -u movie-tracker -f
+```
+
+### View logs in production (Alpine — OpenRC)
+
+```bash
+tail -f /var/log/movie-tracker.log
 ```
 
 ### No test suite
@@ -281,6 +289,8 @@ https://image.tmdb.org/t/p/w1280{backdrop_path}
 
 ## Deployment (LXC)
 
+### Debian/Ubuntu
+
 ```bash
 # 1. Create user
 useradd -r -s /bin/false movietracker
@@ -303,6 +313,35 @@ systemctl start movie-tracker
 
 # 5. Check logs
 journalctl -u movie-tracker -f
+```
+
+### Alpine
+
+```bash
+# 1. Install Python
+apk add python3 py3-pip git
+
+# 2. Create user
+adduser -S -H -s /sbin/nologin movietracker
+
+# 3. Clone and install
+git clone <repo> /opt/movie-tracker
+cd /opt/movie-tracker
+python3 -m venv venv
+venv/bin/pip install -r requirements.txt
+
+# 4. Configure
+cp .env.example .env
+vi .env            # fill in real values
+
+# 5. Install OpenRC service
+cp openrc/movie-tracker /etc/init.d/movie-tracker
+chmod +x /etc/init.d/movie-tracker
+rc-update add movie-tracker default
+rc-service movie-tracker start
+
+# 6. Check logs
+tail -f /var/log/movie-tracker.log
 ```
 
 ---
