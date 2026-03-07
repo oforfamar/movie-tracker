@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% from "partials/movie_card.html" import movie_card %}
+
+{% block title %}Movie Tracker — Upcoming Releases{% endblock %}
+
+{% block content %}
+
+<!-- Filter & sort bar -->
+<div class="mb-6 space-y-3">
+
+  <!-- Stats + active filters summary -->
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <h1 class="text-xl font-bold text-white">
+      Upcoming Releases
+      <span class="ml-2 text-sm font-normal text-gray-500">{{ movies|length }} movie{{ "s" if movies|length != 1 }}</span>
+    </h1>
+
+    <!-- Clear all filters link -->
+    {% if active_genre or active_release_type or active_region or active_provider %}
+    <a href="/movies" class="text-xs text-gray-500 hover:text-plex transition-colors">
+      ✕ Clear filters
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- Filter form -->
+  <form method="GET" action="/movies" id="filter-form" class="flex flex-wrap gap-3 items-end">
+
+    <!-- Genre select -->
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Genre</label>
+      <select
+        name="genre"
+        onchange="navigateWithFilter('genre', this.value)"
+        class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-plex hover:border-gray-600 transition-colors min-w-[130px]"
+      >
+        <option value="">All Genres</option>
+        {% for g in all_genres %}
+        <option value="{{ g }}" {% if g == active_genre %}selected{% endif %}>{{ g }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Release type select -->
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Type</label>
+      <select
+        name="release_type"
+        onchange="navigateWithFilter('release_type', this.value)"
+        class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-plex hover:border-gray-600 transition-colors min-w-[140px]"
+      >
+        <option value="">All Types</option>
+        {% for rt in all_release_types %}
+        <option value="{{ rt }}" {% if rt == active_release_type %}selected{% endif %}>{{ rt }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Provider select -->
+    {% if all_providers %}
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Provider</label>
+      <select
+        name="provider"
+        onchange="navigateWithFilter('provider', this.value)"
+        class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-plex hover:border-gray-600 transition-colors min-w-[140px]"
+      >
+        <option value="">All Providers</option>
+        {% for p in all_providers %}
+        <option value="{{ p }}" {% if p == active_provider %}selected{% endif %}>{{ p }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
+
+    <!-- Region toggle -->
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Region</label>
+      <div class="flex rounded-lg overflow-hidden border border-gray-700">
+        <button
+          type="button"
+          onclick="navigateWithFilter('region', '')"
+          class="px-3 py-2 text-sm transition-colors {% if not active_region %}bg-plex text-black font-semibold{% else %}text-gray-400 hover:bg-gray-800{% endif %}"
+        >All</button>
+        {% for r in all_regions %}
+        <button
+          type="button"
+          onclick="navigateWithFilter('region', '{{ r }}')"
+          class="px-3 py-2 text-sm border-l border-gray-700 transition-colors {% if r == active_region %}bg-plex text-black font-semibold{% else %}text-gray-400 hover:bg-gray-800{% endif %}"
+        >{{ r }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Sort select -->
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Sort</label>
+      <select
+        name="sort"
+        onchange="navigateWithFilter('sort', this.value)"
+        class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-plex hover:border-gray-600 transition-colors"
+      >
+        <option value="release_date"  {% if active_sort == "release_date"  %}selected{% endif %}>Release Date</option>
+        <option value="vote_average"  {% if active_sort == "vote_average"  %}selected{% endif %}>Rating</option>
+        <option value="title"         {% if active_sort == "title"         %}selected{% endif %}>Title</option>
+      </select>
+    </div>
+
+  </form>
+</div>
+
+<!-- Movie grid -->
+{% if movies %}
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+  {% for movie in movies %}
+  {{ movie_card(movie) }}
+  {% endfor %}
+</div>
+{% else %}
+<div class="flex flex-col items-center justify-center py-24 text-center">
+  <svg class="w-16 h-16 text-gray-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+      d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+  </svg>
+  <p class="text-gray-500 text-lg font-medium">No movies found</p>
+  <p class="text-gray-600 text-sm mt-1">
+    {% if active_genre or active_release_type or active_region %}
+      Try removing some filters, or
+      <a href="/movies" class="text-plex hover:underline">clear all</a>.
+    {% else %}
+      Click <button onclick="triggerFetch()" class="text-plex hover:underline">Refresh Now</button> to fetch upcoming movies.
+    {% endif %}
+  </p>
+</div>
+{% endif %}
+
+<!-- Footer -->
+<footer class="mt-12 pb-6 text-center text-xs text-gray-700">
+  Movie data provided by
+  <a href="https://www.themoviedb.org" target="_blank" rel="noopener" class="hover:text-gray-500 transition-colors">
+    The Movie Database (TMDb)
+  </a>
+</footer>
+
+{% endblock %}
