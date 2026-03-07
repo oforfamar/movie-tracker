@@ -35,7 +35,8 @@ class Movie(Document):
 
     tmdb_id: int
     title: str
-    release_date: Optional[str] = None   # "YYYY-MM-DD" or "TBA"
+    release_date: Optional[str] = None      # "YYYY-MM-DD" or "TBA"
+    release_date_dt: Optional[datetime] = None  # parsed UTC datetime for TTL index
     overview: str = ""
     poster_path: Optional[str] = None    # e.g. "/abc123.jpg"
     backdrop_path: Optional[str] = None
@@ -56,6 +57,7 @@ class Movie(Document):
         indexes = [
             IndexModel([("tmdb_id", ASCENDING)], unique=True),
             IndexModel([("release_date", ASCENDING)]),
+            IndexModel([("release_date_dt", ASCENDING)], expireAfterSeconds=7776000),
             IndexModel([("genres", ASCENDING)]),
             IndexModel([("release_type", ASCENDING)]),
             IndexModel([("vote_average", DESCENDING)]),

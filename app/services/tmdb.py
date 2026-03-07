@@ -150,6 +150,20 @@ def _extract_watch_providers(
     return providers
 
 
+def _parse_release_date(date_str: str) -> Optional[datetime]:
+    """
+    Parse a "YYYY-MM-DD" string into a UTC-aware datetime.
+    Returns None for "TBA", empty string, or any unparseable value.
+    MongoDB TTL index ignores documents where the indexed field is null.
+    """
+    if not date_str or date_str == "TBA":
+        return None
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return None
+
+
 def _month_date_range(year: int, month: int) -> Tuple[str, str]:
     """Return (start_date, end_date) strings for a given year/month."""
     start = datetime(year, month, 1)
@@ -199,6 +213,9 @@ async def fetch_and_upsert(region: str, year: int, month: int) -> int:
                     "tmdb_id": stub["id"],
                     "title": details["title"],
                     "release_date": stub.get("release_date") or "TBA",
+                    "release_date_dt": _parse_release_date(
+                        stub.get("release_date") or "TBA"
+                    ),
                     "overview": details.get("overview", ""),
                     "poster_path": stub.get("poster_path"),
                     "backdrop_path": stub.get("backdrop_path"),
