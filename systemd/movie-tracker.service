@@ -1,0 +1,36 @@
+[Unit]
+Description=Movie Tracker Web App
+Documentation=https://github.com/oforfamar/movie-tracker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=movietracker
+Group=movietracker
+WorkingDirectory=/opt/movie-tracker
+EnvironmentFile=/opt/movie-tracker/.env
+
+ExecStart=/opt/movie-tracker/venv/bin/uvicorn app.main:app \
+    --host 0.0.0.0 \
+    --port ${PORT} \
+    --workers 1 \
+    --log-level info
+
+# Restart policy
+Restart=on-failure
+RestartSec=5
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+# Logging — readable via: journalctl -u movie-tracker -f
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=movie-tracker
+
+# Basic hardening for LXC
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
