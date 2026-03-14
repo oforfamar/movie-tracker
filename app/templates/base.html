@@ -51,13 +51,27 @@
   <!-- Top navigation bar -->
   <header class="sticky top-0 z-40 bg-gray-950/95 backdrop-blur border-b border-gray-800">
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
-      <!-- Logo -->
-      <a href="/movies" class="flex items-center gap-2 text-plex font-bold text-lg tracking-tight hover:text-plex-light transition-colors">
-        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-        </svg>
-        Movie Tracker
-      </a>
+      <!-- Logo + nav -->
+      <div class="flex items-center gap-6">
+        <a href="/movies" class="flex items-center gap-2 text-plex font-bold text-lg tracking-tight hover:text-plex-light transition-colors">
+          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+          </svg>
+          Movie Tracker
+        </a>
+        <nav class="flex items-center gap-1">
+          <a href="/movies"
+            class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors
+                   {% if request.url.path.startswith('/movies') %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-gray-200 hover:bg-gray-800/60{% endif %}">
+            Movies
+          </a>
+          <a href="/series"
+            class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors
+                   {% if request.url.path.startswith('/series') %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-gray-200 hover:bg-gray-800/60{% endif %}">
+            Series
+          </a>
+        </nav>
+      </div>
 
       <!-- Right side actions -->
       <div class="flex items-center gap-3">
@@ -124,6 +138,50 @@
             class="flex-1 px-4 py-2 rounded-lg bg-plex hover:bg-plex-dark text-black font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Add Movie
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sonarr "Add Series" modal -->
+  <div id="sonarr-modal" class="fixed inset-0 z-50 hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeSonarrModal()"></div>
+    <!-- Panel -->
+    <div class="relative flex items-center justify-center min-h-screen p-4">
+      <div class="relative bg-gray-900 border border-gray-700 rounded-xl shadow-2xl w-full max-w-md p-6">
+        <!-- Close button -->
+        <button onclick="closeSonarrModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-300 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+
+        <h2 class="text-lg font-semibold text-white mb-1">Add to Sonarr</h2>
+        <p id="sonarr-modal-series-title" class="text-plex font-medium text-sm mb-5"></p>
+
+        <label class="block text-sm text-gray-400 mb-1.5">Download folder</label>
+        <select
+          id="sonarr-folder-select"
+          class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-plex transition-colors mb-6"
+        >
+          <option value="">Loading folders…</option>
+        </select>
+
+        <div class="flex gap-3">
+          <button
+            onclick="closeSonarrModal()"
+            class="flex-1 px-4 py-2 rounded-lg border border-gray-700 text-sm text-gray-300 hover:bg-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            id="sonarr-modal-confirm-btn"
+            onclick="confirmAddToSonarr()"
+            class="flex-1 px-4 py-2 rounded-lg bg-plex hover:bg-plex-dark text-black font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Add Series
           </button>
         </div>
       </div>

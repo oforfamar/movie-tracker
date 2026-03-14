@@ -15,8 +15,11 @@ from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.database import init_db
 from app.models.movie import Movie
+from app.models.series import Series
 from app.routers import movies as movies_router
 from app.routers import radarr as radarr_router
+from app.routers import series as series_router
+from app.routers import sonarr as sonarr_router
 from app.scheduler import daily_fetch
 
 
@@ -37,8 +40,9 @@ async def lifespan(app: FastAPI):
     scheduler.start()
 
     # Seed data immediately on first boot so the UI isn't blank
-    count = await Movie.count()
-    if count == 0:
+    movie_count = await Movie.count()
+    series_count = await Series.count()
+    if movie_count == 0 and series_count == 0:
         print("[App] Empty database — running initial fetch...")
         asyncio.create_task(daily_fetch())
 
@@ -49,8 +53,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Movie Tracker",
-    description="Plex-style upcoming movie release tracker with Radarr integration.",
-    version="2.0.0",
+    description="Plex-style upcoming movie and series tracker with Radarr/Sonarr integration.",
+    version="3.0.0",
     lifespan=lifespan,
 )
 
@@ -60,6 +64,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Routers
 app.include_router(movies_router.router)
 app.include_router(radarr_router.router)
+app.include_router(series_router.router)
+app.include_router(sonarr_router.router)
 
 
 @app.post("/admin/fetch", tags=["admin"])

@@ -1,0 +1,128 @@
+{% macro series_card(series) %}
+{%- set poster_url = "https://image.tmdb.org/t/p/w500" ~ series.poster_path if series.poster_path else "" -%}
+
+{%- set status_colours = {
+  "Returning Series": "bg-green-600/80 text-green-100",
+  "In Production":    "bg-blue-600/80 text-blue-100",
+  "Planned":          "bg-blue-500/80 text-blue-100",
+  "Ended":            "bg-gray-600/80 text-gray-100",
+  "Cancelled":        "bg-red-700/80 text-red-100",
+  "Pilot":            "bg-yellow-600/80 text-yellow-100",
+} -%}
+{%- set badge_cls = status_colours.get(series.status, "bg-gray-600/80 text-gray-100") -%}
+
+<article
+  class="group relative flex flex-col bg-gray-900 rounded-xl overflow-hidden border border-gray-800 hover:border-plex/60 transition-all duration-300 hover:shadow-xl hover:shadow-plex/10 hover:-translate-y-0.5"
+  data-tmdb-id="{{ series.tmdb_id }}"
+  data-title="{{ series.title | e }}"
+>
+  <!-- Poster -->
+  <a href="/series/{{ series.tmdb_id }}" class="block relative aspect-[2/3] bg-gray-800 overflow-hidden">
+    {% if poster_url %}
+    <img
+      src="{{ poster_url }}"
+      alt="{{ series.title }} poster"
+      loading="lazy"
+      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+    />
+    {% else %}
+    <div class="w-full h-full flex items-center justify-center">
+      <svg class="w-16 h-16 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/>
+      </svg>
+    </div>
+    {% endif %}
+
+    <!-- Status badge -->
+    <span class="absolute top-2 right-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide {{ badge_cls }}">
+      {{ series.status }}
+    </span>
+
+    <!-- Hover overlay -->
+    <div class="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+      <span class="text-xs text-gray-200">View details</span>
+    </div>
+  </a>
+
+  <!-- Info -->
+  <div class="flex flex-col flex-1 p-3 gap-2">
+    <!-- Title -->
+    <h3 class="font-semibold text-sm text-white line-clamp-2 leading-snug">
+      <a href="/series/{{ series.tmdb_id }}" class="hover:text-plex transition-colors">
+        {{ series.title }}
+      </a>
+    </h3>
+
+    <!-- Meta row -->
+    <div class="flex items-center gap-2 text-xs text-gray-400 flex-wrap">
+      <!-- Star rating -->
+      <span class="flex items-center gap-1 text-plex font-medium">
+        <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+        </svg>
+        {{ "%.1f"|format(series.vote_average) }}
+      </span>
+
+      <!-- First air date -->
+      {% if series.first_air_date and series.first_air_date != "TBA" %}
+      <span>{{ series.first_air_date }}</span>
+      {% else %}
+      <span class="text-gray-600">TBA</span>
+      {% endif %}
+
+      <!-- Seasons -->
+      {% if series.number_of_seasons is not none %}
+      <span>{{ series.number_of_seasons }}S</span>
+      {% endif %}
+    </div>
+
+    <!-- Genres -->
+    {% if series.genres %}
+    <div class="flex flex-wrap gap-1">
+      {% for genre in series.genres[:3] %}
+      <a
+        href="/series?genre={{ genre | urlencode }}"
+        class="px-1.5 py-0.5 rounded text-[10px] bg-gray-800 text-gray-400 hover:bg-plex/20 hover:text-plex transition-colors"
+      >{{ genre }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Watch providers -->
+    {% if series.watch_providers %}
+    <div class="flex flex-wrap gap-1.5 items-center">
+      {% for provider in series.watch_providers[:4] %}
+      <a
+        href="/series?provider={{ provider.provider_name | urlencode }}"
+        title="{{ provider.provider_name }}"
+        class="block rounded overflow-hidden ring-1 ring-gray-700 hover:ring-plex transition-all"
+      >
+        <img
+          src="https://image.tmdb.org/t/p/w45{{ provider.logo_path }}"
+          alt="{{ provider.provider_name }}"
+          loading="lazy"
+          class="w-6 h-6 object-cover"
+        />
+      </a>
+      {% endfor %}
+      {% if series.watch_providers | length > 4 %}
+      <span class="text-[10px] text-gray-600">+{{ series.watch_providers | length - 4 }}</span>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Spacer -->
+    <div class="flex-1"></div>
+
+    <!-- Add to Sonarr button -->
+    <button
+      id="sonarr-btn-{{ series.tmdb_id }}"
+      onclick="openSonarrModal(this)"
+      class="sonarr-btn mt-1 w-full py-2 rounded-lg text-xs font-semibold transition-all duration-200
+             bg-plex/10 border border-plex/40 text-plex hover:bg-plex hover:text-black"
+    >
+      + Add to Sonarr
+    </button>
+  </div>
+</article>
+{% endmacro %}
