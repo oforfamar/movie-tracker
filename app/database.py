@@ -16,8 +16,13 @@ async def init_db() -> None:
     """Initialise Motor client and register all Beanie document models."""
     # Import here to avoid circular imports at module load time
     from app.models.movie import Movie
+    from app.models.series import Series
 
     client = motor.motor_asyncio.AsyncIOMotorClient(settings.mongodb_uri)
     database = client.get_default_database()
 
-    await init_beanie(database=database, document_models=[Movie])
+    await init_beanie(
+        database=database,
+        document_models=[Movie, Series],
+        allow_index_dropping=True,
+    )

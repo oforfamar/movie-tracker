@@ -7,7 +7,8 @@ The daily_fetch job is registered in app/main.py's lifespan context.
 from datetime import datetime, timezone
 
 from app.config import settings
-from app.services.tmdb import fetch_and_upsert
+from app.services.tmdb import fetch_and_upsert as fetch_movies
+from app.services.tmdb_series import fetch_and_upsert as fetch_series
 
 
 def _current_and_next_months():
@@ -25,15 +26,28 @@ async def daily_fetch() -> None:
     """
     Scheduled job: fetch current + next month for every configured region.
     Runs sequentially (one region/month at a time) to respect TMDb rate limits.
+    Fetches both movies and TV series.
     """
     print(f"[Scheduler] daily_fetch started at {datetime.now(timezone.utc).isoformat()}")
     months = _current_and_next_months()
-    total = 0
+    total_movies = 0
+    total_series = 0
+
     for region in settings.tmdb_regions:
         for year, month in months:
             try:
-                count = await fetch_and_upsert(region, year, month)
-                total += count
+                count = await fetch_movies(region, year, month)
+                total_movies += count
             except Exception as e:
-                print(f"[Scheduler] fetch_and_upsert failed for {region} {year}-{month:02d}: {e}")
-    print(f"[Scheduler] daily_fetch complete — {total} movies upserted.")
+                print(f"[Scheduler] fetch_movies failed for {region} {year}-{month:02d}: {e}")
+
+            try:
+                count = await fetch_series(region, year, month)
+                total_series += count
+            except Exception as e:
+                print(f"[Scheduler] fetch_series failed for {region} {year}-{month:02d}: {e}")
+
+    print(
+        f"[Scheduler] daily_fetch complete — "
+        f"{total_movies} movies and {total_series} series upserted."
+    )

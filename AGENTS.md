@@ -9,22 +9,26 @@ look for different filenames. Always keep them in sync.
 ## Project Overview
 
 Movie Tracker is a Python 3.12 FastAPI web application that fetches upcoming movie
-release data from the TMDb API, stores it in MongoDB, and presents it as a
-Plex-style dark-themed UI. Users can filter, sort, and push any movie directly to
-a self-hosted Radarr instance.
+releases and TV series from the TMDb API, stores them in MongoDB, and presents
+them as a Plex-style dark-themed UI. Users can filter, sort, push any movie to a
+self-hosted Radarr instance, and push any TV series to a self-hosted Sonarr instance.
 
 **Pipeline:**
 ```
 APScheduler (daily)
-  └─ app/services/tmdb.py  →  MongoDB (movies collection)
-                                └─ app/routers/movies.py  →  Jinja2 templates  →  browser
-                                └─ app/routers/radarr.py  →  Radarr API
+  ├─ app/services/tmdb.py         →  MongoDB (movies collection)
+  │                                    └─ app/routers/movies.py  →  Jinja2 templates  →  browser
+  │                                    └─ app/routers/radarr.py  →  Radarr API
+  └─ app/services/tmdb_series.py  →  MongoDB (series collection)
+                                       └─ app/routers/series.py  →  Jinja2 templates  →  browser
+                                       └─ app/routers/sonarr.py  →  Sonarr API
 ```
 
 **External services:**
-- TMDb REST API v3 (movie data)
+- TMDb REST API v3 (movie and TV series data)
 - MongoDB (external cluster, auth required)
 - Radarr (self-hosted, push movies for download)
+- Sonarr (self-hosted, push TV series for download)
 
 ---
 
@@ -38,23 +42,34 @@ movie-tracker/
 │   ├── config.py                 # Pydantic Settings — reads .env
 │   ├── database.py               # Motor client + Beanie init
 │   ├── models/
-│   │   └── movie.py              # Beanie Document + CastMember embedded model
+│   │   ├── movie.py              # Beanie Document + CastMember/WatchProvider embedded models
+│   │   └── series.py             # Beanie Document for TV series
 │   ├── routers/
 │   │   ├── movies.py             # GET /movies, GET /movies/{tmdb_id}
-│   │   └── radarr.py             # GET /radarr/folders, POST /radarr/movies/{tmdb_id}/add
+│   │   ├── radarr.py             # GET /radarr/folders, POST /radarr/movies/{tmdb_id}/add
+│   │   ├── series.py             # GET /series, GET /series/{tmdb_id}
+│   │   └── sonarr.py             # GET /sonarr/folders, POST /sonarr/series/{tmdb_id}/add
 │   ├── services/
-│   │   ├── tmdb.py               # Async TMDb client, fetch + upsert logic
-│   │   └── radarr.py             # Async Radarr API client
-│   ├── scheduler.py              # APScheduler daily_fetch job
+│   │   ├── tmdb.py               # Async TMDb client, movie fetch + upsert logic
+│   │   ├── tmdb_series.py        # Async TMDb client, series fetch + upsert logic
+│   │   ├── radarr.py             # Async Radarr API client
+│   │   └── sonarr.py             # Async Sonarr API client
+│   ├── scheduler.py              # APScheduler daily_fetch job (movies + series)
 │   └── templates/
-│       ├── base.html             # Layout, Tailwind CDN, nav, Radarr modal
-│       ├── index.html            # Plex-like card grid with filter/sort bar
+│       ├── base.html             # Layout, Tailwind CDN, nav, Radarr + Sonarr modals
+│       ├── index.html            # Movie card grid with filter/sort bar
 │       ├── detail.html           # Single movie detail page
-│       └── partials/
-│           └── movie_card.html   # Jinja2 macro — reusable movie card
+│       ├── 404.html              # Context-aware 404 (movie or series)
+│       ├── partials/
+│       │   └── movie_card.html   # Jinja2 macro — reusable movie card
+│       └── series/
+│           ├── index.html        # Series card grid with filter/sort bar
+│           ├── detail.html       # Single series detail page
+│           └── partials/
+│               └── series_card.html  # Jinja2 macro — reusable series card
 ├── static/
 │   └── js/
-│       └── main.js               # Modal logic, fetch() POST, button state
+│       └── main.js               # Modal logic, fetch() POST, button state (Radarr + Sonarr)
 ├── systemd/
 │   └── movie-tracker.service     # Copy to /etc/systemd/system/ on Debian/Ubuntu LXC
 ├── openrc/
@@ -126,6 +141,9 @@ Copy `.env.example` to `.env` and fill in real values before running.
 | `RADARR_URL` | Radarr base URL (no trailing slash) | `http://192.168.1.10:7878` |
 | `RADARR_API_KEY` | Radarr API key | `xyz789` |
 | `RADARR_QUALITY_PROFILE` | Exact name of quality profile in Radarr | `4K-2160p` |
+| `SONARR_URL` | Sonarr base URL (no trailing slash) | `http://192.168.1.10:8989` |
+| `SONARR_API_KEY` | Sonarr API key | `xyz789` |
+| `SONARR_QUALITY_PROFILE` | Exact name of quality profile in Sonarr | `WEB-1080p` |
 | `FETCH_HOUR` | UTC hour (0-23) for daily auto-fetch | `3` |
 | `PORT` | Uvicorn listen port | `8000` |
 
@@ -207,7 +225,9 @@ All output goes to `print()`. Do not use the `logging` module.
 
 ## Data Model
 
-The canonical document is `app/models/movie.py:Movie`.
+### Movie (`app/models/movie.py`)
+
+The canonical document for movies.
 Upsert key: `tmdb_id` (unique index). Never duplicate — always upsert.
 
 ```python
@@ -230,6 +250,33 @@ class Movie(Document):
     fetched_at: datetime
 ```
 
+### Series (`app/models/series.py`)
+
+Mirrors Movie but for TV series. Separate `series` MongoDB collection.
+Upsert key: `tmdb_id`. Reuses `CastMember` and `WatchProvider` from `movie.py`.
+
+```python
+class Series(Document):
+    tmdb_id: int
+    title: str
+    first_air_date: Optional[str]    # "YYYY-MM-DD" or "TBA"
+    overview: str
+    poster_path: Optional[str]
+    backdrop_path: Optional[str]
+    vote_average: float
+    vote_count: int
+    number_of_seasons: Optional[int]
+    number_of_episodes: Optional[int]
+    status: str                      # "Returning Series", "Ended", "Cancelled", etc.
+    genres: List[str]
+    cast: List[CastMember]           # top 5 billed, embedded
+    trailer_url: Optional[str]       # YouTube URL or None
+    tmdb_url: str                    # https://www.themoviedb.org/tv/{id}
+    regions: List[str]               # accumulated, e.g. ["US", "GB"]
+    watch_providers: List[WatchProvider]
+    fetched_at: datetime             # TTL index — docs expire 90 days after last fetch
+```
+
 Image URL construction (templates only):
 ```
 https://image.tmdb.org/t/p/w500{poster_path}
@@ -248,6 +295,15 @@ https://image.tmdb.org/t/p/w1280{backdrop_path}
 - Upserts by `tmdb_id`; merges `regions` list rather than overwriting.
 - Auth: API key as query param `?api_key=...`, never in headers.
 
+### TMDb series service (`app/services/tmdb_series.py`)
+
+- `fetch_and_upsert(region, year, month)` — public entry point called by scheduler.
+- Fetches up to 5 pages of `GET /discover/tv`, then enriches each stub with
+  `GET /tv/{id}?append_to_response=aggregate_credits,videos,watch/providers,content_ratings`.
+- Uses `aggregate_credits` (not `credits`) for TV cast — this is the correct TMDb endpoint.
+- Upserts into the `series` collection by `tmdb_id`; merges `regions` list.
+- Auth: API key as query param `?api_key=...`, never in headers.
+
 ### Radarr service (`app/services/radarr.py`)
 
 - `get_root_folders()` — lists root folders from `GET /api/v3/rootfolder`.
@@ -256,11 +312,21 @@ https://image.tmdb.org/t/p/w1280{backdrop_path}
 - Quality profile name comes from `settings.radarr_quality_profile` (`4K-2160p`).
 - Auth: `X-Api-Key` header.
 
+### Sonarr service (`app/services/sonarr.py`)
+
+- `get_root_folders()` — lists root folders from `GET /api/v3/rootfolder`.
+- `add_series(tmdb_id, title, year, folder_path)` — checks library via
+  `GET /api/v3/series` (scans for matching `tmdbId`), looks up metadata via
+  `GET /api/v3/series/lookup?term=tmdb:{id}`, then `POST /api/v3/series`.
+- Quality profile name comes from `settings.sonarr_quality_profile` (`WEB-1080p`).
+- Auth: `X-Api-Key` header.
+
 ### Scheduler (`app/scheduler.py`)
 
 - `AsyncIOScheduler`, registered in `app/main.py` lifespan.
 - `daily_fetch()` runs at `settings.fetch_hour:00 UTC`.
 - Fetches current month + next month for each region in `settings.tmdb_regions`.
+- Runs both movie and series fetches per region/month, with independent error handling.
 - On first boot (empty DB), an immediate fetch is triggered via `asyncio.create_task`.
 
 ### Frontend (`app/templates/`)
@@ -271,7 +337,10 @@ https://image.tmdb.org/t/p/w1280{backdrop_path}
 - All filtering and sorting is server-side (MongoDB query params); no client-side
   data manipulation.
 - `static/js/main.js` handles only: modal open/close, folder dropdown population
-  via `fetch('/radarr/folders')`, POST to add movie, button state update.
+  via `fetch('/radarr/folders')` or `fetch('/sonarr/folders')`, POST to add
+  movie/series, button state update.
+- `navigateWithFilter()` targets `/movies`; `navigateSeriesWithFilter()` targets
+  `/series` and uses `status` instead of `release_type` as a filter field.
 - Do not add JS frameworks or build tooling.
 
 ### API routes
@@ -283,7 +352,11 @@ https://image.tmdb.org/t/p/w1280{backdrop_path}
 | `GET` | `/movies/{tmdb_id}` | `routers/movies.py` — detail page |
 | `GET` | `/radarr/folders` | `routers/radarr.py` — folder list JSON |
 | `POST` | `/radarr/movies/{tmdb_id}/add` | `routers/radarr.py` — push to Radarr |
-| `POST` | `/admin/fetch` | `main.py` — trigger manual fetch |
+| `GET` | `/series` | `routers/series.py` — grid page |
+| `GET` | `/series/{tmdb_id}` | `routers/series.py` — detail page |
+| `GET` | `/sonarr/folders` | `routers/sonarr.py` — folder list JSON |
+| `POST` | `/sonarr/series/{tmdb_id}/add` | `routers/sonarr.py` — push to Sonarr |
+| `POST` | `/admin/fetch` | `main.py` — trigger manual fetch (movies + series) |
 
 ---
 

@@ -30,6 +30,11 @@ class Settings(BaseSettings):
     radarr_api_key: str
     radarr_quality_profile: str = "4K-2160p"
 
+    # Sonarr
+    sonarr_url: str
+    sonarr_api_key: str
+    sonarr_quality_profile: str = "WEB-1080p"
+
     # App
     fetch_hour: int = 3
     port: int = 8000
@@ -42,7 +47,7 @@ class Settings(BaseSettings):
         populate_by_name=True,
     )
 
-    @field_validator("radarr_url", mode="before")
+    @field_validator("radarr_url", "sonarr_url", mode="before")
     @classmethod
     def strip_trailing_slash(cls, v: str) -> str:
         return v.rstrip("/")
