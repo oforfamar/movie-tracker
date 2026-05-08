@@ -67,7 +67,7 @@ All settings are read from `.env` (see `.env.example`):
 app/
 ├── main.py          # FastAPI app + lifespan (DB init, scheduler)
 ├── config.py        # Pydantic Settings — reads .env
-├── database.py      # Motor client + Beanie init
+├── database.py      # Async PyMongo client + Beanie init
 ├── scheduler.py     # APScheduler daily_fetch job (movies + series)
 ├── models/
 │   ├── movie.py     # Beanie Document + CastMember/WatchProvider embedded models

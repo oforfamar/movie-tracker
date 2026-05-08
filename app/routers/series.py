@@ -73,6 +73,7 @@ async def series_index(
     last_fetched = await _last_fetched_str()
 
     return templates.TemplateResponse(
+        request,
         "series/index.html",
         {
             "request": request,
@@ -97,6 +98,7 @@ async def series_detail(request: Request, tmdb_id: int) -> HTMLResponse:
     series = await Series.find_one(Series.tmdb_id == tmdb_id)
     if not series:
         return templates.TemplateResponse(
+            request,
             "404.html",
             {"request": request, "last_fetched": None},
             status_code=404,
@@ -104,6 +106,7 @@ async def series_detail(request: Request, tmdb_id: int) -> HTMLResponse:
 
     last_fetched = await _last_fetched_str()
     return templates.TemplateResponse(
+        request,
         "series/detail.html",
         {"request": request, "series": series, "last_fetched": last_fetched},
     )

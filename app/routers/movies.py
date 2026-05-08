@@ -80,6 +80,7 @@ async def movies_index(
     last_fetched = await _last_fetched_str()
 
     return templates.TemplateResponse(
+        request,
         "index.html",
         {
             "request": request,
@@ -104,6 +105,7 @@ async def movie_detail(request: Request, tmdb_id: int) -> HTMLResponse:
     movie = await Movie.find_one(Movie.tmdb_id == tmdb_id)
     if not movie:
         return templates.TemplateResponse(
+            request,
             "404.html",
             {"request": request, "last_fetched": None},
             status_code=404,
@@ -111,6 +113,7 @@ async def movie_detail(request: Request, tmdb_id: int) -> HTMLResponse:
 
     last_fetched = await _last_fetched_str()
     return templates.TemplateResponse(
+        request,
         "detail.html",
         {"request": request, "movie": movie, "last_fetched": last_fetched},
     )

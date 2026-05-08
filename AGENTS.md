@@ -40,7 +40,7 @@ movie-tracker/
 │   ├── __init__.py
 │   ├── main.py                   # FastAPI app + lifespan (DB init, scheduler)
 │   ├── config.py                 # Pydantic Settings — reads .env
-│   ├── database.py               # Motor client + Beanie init
+│   ├── database.py               # Async PyMongo client + Beanie init
 │   ├── models/
 │   │   ├── movie.py              # Beanie Document + CastMember/WatchProvider embedded models
 │   │   └── series.py             # Beanie Document for TV series
