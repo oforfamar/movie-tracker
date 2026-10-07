@@ -19,8 +19,13 @@ async def init_db() -> None:
     client = AsyncMongoClient(settings.mongodb_uri)
     database = client.get_default_database()
 
-    await init_beanie(
-        database=database,
-        document_models=[Movie, Series],
-        allow_index_dropping=True,
-    )
+    try:
+        await init_beanie(
+            database=database,
+            document_models=[Movie, Series],
+            allow_index_dropping=True,
+        )
+    except Exception:
+        # Don't leave a half-open client behind when the caller retries
+        await client.close()
+        raise
