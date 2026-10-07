@@ -22,11 +22,27 @@ from app.routers import series as series_router
 from app.routers import sonarr as sonarr_router
 from app.scheduler import daily_fetch
 
+DB_INIT_MAX_TRIES = 5
+DB_INIT_RETRY_DELAY = 5  # seconds
+
+
+async def _init_db_with_retry() -> None:
+    """Call init_db(), retrying when MongoDB or DNS isn't reachable yet."""
+    for attempt in range(1, DB_INIT_MAX_TRIES + 1):
+        try:
+            await init_db()
+            return
+        except Exception as e:
+            print(f"[App] DB init failed ({attempt}/{DB_INIT_MAX_TRIES}): {e}")
+            if attempt == DB_INIT_MAX_TRIES:
+                raise
+            await asyncio.sleep(DB_INIT_RETRY_DELAY)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup: init DB, start scheduler. Shutdown: stop scheduler."""
-    await init_db()
+    await _init_db_with_retry()
 
     scheduler = AsyncIOScheduler()
     scheduler.add_job(

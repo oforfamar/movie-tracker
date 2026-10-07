@@ -6,7 +6,6 @@ description="Movie Tracker Web App"
 user="movietracker"
 group="movietracker"
 directory="/opt/movie-tracker"
-pidfile="/run/${name}.pid"
 output_log="/var/log/${name}.log"
 error_log="/var/log/${name}.log"
 
@@ -15,7 +14,13 @@ error_log="/var/log/${name}.log"
 command="/opt/movie-tracker/venv/bin/uvicorn"
 command_args="app.main:app --host 0.0.0.0 --port 8000 --workers 1 --log-level info"
 command_user="${user}:${group}"
-command_background=true
+
+# Run under supervise-daemon so a crashed app is restarted automatically.
+# Gives up after 5 respawns within respawn_period; the counter resets after it.
+supervisor="supervise-daemon"
+respawn_delay=5
+respawn_max=5
+respawn_period=1800
 
 # Load secrets and config from .env
 env_file="${directory}/.env"

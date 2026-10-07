@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "chore"
+    groups:
+      # FastAPI stack — released in lockstep, break together
+      web:
+        patterns:
+          - "fastapi"
+          - "starlette"
+          - "uvicorn*"
+          - "python-multipart"
+          - "jinja2"
+      # Beanie pins a PyMongo range, so move them as a pair
+      database:
+        patterns:
+          - "beanie"
+          - "pymongo"
+      # Settings loading
+      config:
+        patterns:
+          - "pydantic*"
+          - "python-dotenv"
