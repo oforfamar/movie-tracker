@@ -74,6 +74,8 @@ movie-tracker/
 │   └── movie-tracker.service     # Copy to /etc/systemd/system/ on Debian/Ubuntu LXC
 ├── openrc/
 │   └── movie-tracker             # Copy to /etc/init.d/ on Alpine LXC
+├── .github/
+│   └── dependabot.yml            # Monthly grouped pip dependency updates
 ├── .env                          # Never committed — real secrets
 ├── .env.example                  # Committed template
 ├── requirements.txt
@@ -328,6 +330,12 @@ https://image.tmdb.org/t/p/w1280{backdrop_path}
 - Fetches current month + next month for each region in `settings.tmdb_regions`.
 - Runs both movie and series fetches per region/month, with independent error handling.
 - On first boot (empty DB), an immediate fetch is triggered via `asyncio.create_task`.
+
+### Startup resilience
+
+- `app/main.py` lifespan retries `init_db()` up to 5 times, 5 s apart, then exits.
+- `openrc/movie-tracker` runs under `supervise-daemon` and respawns a crashed app
+  up to 5 times (`respawn_max`) within `respawn_period`.
 
 ### Frontend (`app/templates/`)
 
